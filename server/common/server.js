@@ -1,53 +1,56 @@
-import Express from 'express';
-import cookieParser from 'cookie-parser';
-import * as path from 'path';
-import * as bodyParser from 'body-parser';
-import * as http from 'http';
-import * as os from 'os';
-import l from './logger';
-import oas from './swagger';
+import express from "express";
+import cookieParser from "cookie-parser";
+import * as path from "path";
+import * as bodyParser from "body-parser";
+import * as http from "http";
+import * as os from "os";
+import l from "./logger";
+import oas from "./swagger";
+import connectDB from "../databases/mongoose";
+import routes from "../routes";
 
-const app = new Express();
+const app = express();
+const root = path.normalize(`${__dirname}/../..`);
 
-export default class ExpressServer {
-  constructor() {
-    const root = path.normalize(`${__dirname}/../..`);
-
-    app.use(bodyParser.json({ limit: process.env.REQUEST_LIMIT || '100kb' }));
-    app.use(
-      bodyParser.urlencoded({
-        extended: true,
-        limit: process.env.REQUEST_LIMIT || '100kb',
-      })
-    );
-    app.use(bodyParser.text({ limit: process.env.REQUEST_LIMIT || '100kb' }));
-    app.use(cookieParser(process.env.SESSION_SECRET));
-    app.use(Express.static(`${root}/public`));
-  }
-
-  router(routes) {
-    this.routes = routes;
-    return this;
-  }
-
-  listen(port = process.env.PORT) {
-    const welcome = (p) => () =>
-      l.info(
-        `up and running in ${
-          process.env.NODE_ENV || 'development'
-        } @: ${os.hostname()} on port: ${p}}`
-      );
-
-    oas(app, this.routes)
-      .then(() => {
-        http.createServer(app).listen(port, welcome(port));
-      })
-      .catch((e) => {
-        l.error(e);
-        // eslint-disable-next-line no-process-exit
-        process.exit(1);
-      });
-
-    return app;
-  }
+function configureApp() {
+  app.use(bodyParser.json({ limit: process.env.REQUEST_LIMIT || "100kb" }));
+  app.use(
+    bodyParser.urlencoded({
+      extended: true,
+      limit: process.env.REQUEST_LIMIT || "100kb",
+    })
+  );
+  app.use(bodyParser.text({ limit: process.env.REQUEST_LIMIT || "100kb" }));
+  app.use(cookieParser(process.env.SESSION_SECRET));
+  app.use(express.static(`${root}/public`));
 }
+
+function setRoutes(routes) {
+  routes(app);
+}
+
+function startServer(port = process.env.PORT) {
+  const welcome = (p) => () =>
+    l.info(
+      `up and running in ${
+        process.env.NODE_ENV || "development"
+      } @: ${os.hostname()} on port: ${p}`
+    );
+
+  oas(app, routes)
+    .then(() => {
+      http.createServer(app).listen(port, welcome(port));
+    })
+    .catch((e) => {
+      l.error(e);
+      process.exit(1);
+    });
+
+  return app;
+}
+
+connectDB();
+
+configureApp();
+
+export { setRoutes, startServer };

@@ -1,8 +1,10 @@
-import pino from 'pino';
+import pino from "pino";
 
-const l = pino({
-  name: process.env.APP_ID,
-  level: process.env.LOG_LEVEL,
+const level = process.env.LOG_LEVEL || "info";
+
+const logger = pino({
+  level,
+  prettyPrint: process.env.NODE_ENV !== "production",
 });
 
-export default l;
+export default logger;

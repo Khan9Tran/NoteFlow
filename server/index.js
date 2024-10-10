@@ -1,5 +1,11 @@
-import './common/env';
-import Server from './common/server';
-import routes from './routes';
+import { setRoutes, startServer } from "./common/server";
+import routes from "./routes";
+import "./common/env";
 
-export default new Server().router(routes).listen(process.env.PORT);
+
+setRoutes((app) => routes(app)); 
+
+// Start the server
+console.log("Starting server on port " + process.env.PORT);
+
+export default startServer(process.env.PORT);
