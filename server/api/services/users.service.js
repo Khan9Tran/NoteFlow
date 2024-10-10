@@ -1,16 +1,17 @@
-import { createUser } from "../../models/users/user.class";
-import { User } from "../../models/users/user.schema";
+import { User } from "../../models/user";
 import l from "../../common/logger";
+import AppError from "../../utils/AppError";
 
-async function create(userData) {
-  l.info(`create`);
-  try {
-    const user = new User(userData);
-    const savedUser = await createUser(user);
-    return { status: 201, data: savedUser }; 
-  } catch (error) {
-    throw error;
+const create = async (userData) => {
+  l.info(`create account with: ${userData.email}`);
+
+  const u = await User.findOne({ email: userData.email });
+  if (u) {
+    throw new AppError("User already exists", 400);
   }
+
+  const user = new User(userData);
+  return await user.save();
 }
 
 export { create };

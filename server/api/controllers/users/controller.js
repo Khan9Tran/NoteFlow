@@ -1,14 +1,9 @@
+import asyncErrorHandler from "../../../utils/asyncErrorHandler";
 import { create } from "../../services/users.service";
 
-async function registerUser(req, res, next) {
-  try {
-    const userData = req.body;
-    const result = await create(userData);
-
-    return res.status(result.status).json(result.data);
-  } catch (error) {
-    next(error);
-  }
-}
+const registerUser = asyncErrorHandler(async (req, res, next) => {
+  const result = await create(req.body);
+  res.status(201).json({ message: "Success", data: result });
+});
 
 export { registerUser };
