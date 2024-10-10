@@ -1,4 +1,4 @@
-import { User } from "../../models/user";
+import { User } from "../../models/user.schema";
 import l from "../../common/logger";
 import AppError from "../../utils/AppError";
 
