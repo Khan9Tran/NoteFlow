@@ -1,7 +1,7 @@
 import * as express from 'express';
-import { registerUser } from './controller';
-import validate from '../../middlewares/validate';
-import { userRegisterRequest } from '../../validators/userValidator';
+import { registerUser } from './controller.js';
+import validate from '../../middlewares/validate.js';
+import { userRegisterRequest } from '../../validators/user/registerRequest.js';
 
 
 export default express

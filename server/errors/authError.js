@@ -1,4 +1,4 @@
-import AppError from "../utils/AppError";
+import AppError from "../utils/AppError.js";
 
 // Lỗi khi không xác thực
 class UnauthorizedError extends AppError {

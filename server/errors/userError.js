@@ -1,4 +1,4 @@
-import AppError from "../utils/AppError";
+import AppError from "../utils/AppError.js";
 
 // Lỗi khi email đã được sử dụng
 class EmailInUseError extends AppError {

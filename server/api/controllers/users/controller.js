@@ -1,6 +1,5 @@
-import { EmailInUseError } from "../../../errors/userError";
-import asyncErrorHandler from "../../../utils/asyncErrorHandler";
-import { created, noContent } from "../../helpers/http";
+import asyncErrorHandler from "../../../utils/asyncErrorHandler.js";
+import { created, noContent } from "../../helpers/http.js";
 
 const registerUser = asyncErrorHandler(async (req, res, next) => {
   return noContent();

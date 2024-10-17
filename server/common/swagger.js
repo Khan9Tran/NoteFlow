@@ -1,7 +1,12 @@
 import middleware from "swagger-express-middleware";
 import * as path from "path";
-import errorHandler from "../api/middlewares/error.handler";
+import errorHandler from "../api/middlewares/error.handler.js";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 
+// Đường dẫn đến tệp hiện tại
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 export default function swagger(app, routes) {
   return new Promise((resolve, reject) => {
     middleware(path.join(__dirname, "api.yml"), app, (err, mw) => {

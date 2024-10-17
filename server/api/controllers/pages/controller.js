@@ -1,6 +1,6 @@
-import asyncErrorHandler from "../../../utils/asyncErrorHandler";
-import { create } from "../../services/users.service";
-import { created } from "../../helpers/http";
+import asyncErrorHandler from "../../../utils/asyncErrorHandler.js";
+import { create } from "../../services/users.service.js";
+import { created } from "../../helpers/http.js";
 
 const registerUser = asyncErrorHandler(async (req, res, next) => {
   const result = await create(req.body);

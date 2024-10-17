@@ -1,5 +1,5 @@
-import asyncErrorHandler from "../../../utils/asyncErrorHandler";
-import { create } from "../../services/users.service";
+import asyncErrorHandler from "../../../utils/asyncErrorHandler.js";
+import { create } from "../../services/users.service.js";
 
 const registerUser = asyncErrorHandler(async (req, res, next) => {
   const result = await create(req.body);

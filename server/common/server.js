@@ -1,13 +1,21 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import * as path from "path";
-import * as bodyParser from "body-parser";
+import bodyParser from "body-parser";
 import * as http from "http";
 import * as os from "os";
-import l from "./logger";
-import oas from "./swagger";
-import connectDB from "../databases/mongoose";
-import routes from "../routes";
+import l from "./logger.js";
+import oas from "./swagger.js";
+import connectDB from "../databases/mongoose.js";
+import routes from "../routes.js";
+
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+// Đường dẫn đến tệp hiện tại
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 
 const app = express();
 const root = path.normalize(`${__dirname}/../..`);

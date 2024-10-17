@@ -1,6 +1,6 @@
-import { setRoutes, startServer } from "./common/server";
-import routes from "./routes";
-import "./common/env";
+import { setRoutes, startServer } from "../server/common/server.js";
+import routes from "./routes.js";
+import "./common/env.js";
 
 
 setRoutes((app) => routes(app)); 
