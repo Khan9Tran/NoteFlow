@@ -3,8 +3,7 @@ import { Workspace } from "../../models/workspace.schema.js";
 import { Page } from "../../models/page.schema.js";
 import { EmailInUseError } from "../../errors/userError.js";
 import _ from "lodash";
-import { hashPassword } from "../../security/bcryptPassword.js";
-import { created } from "../helpers/http.js";
+import { hashPassword, verifyPassword } from "../../security/bcryptPassword.js";
 import mongoose from "mongoose";
 import logger from "../../common/logger.js";
 import { createFirstPage } from "./pages.service.js";
@@ -47,4 +46,5 @@ const create = async (userData) => {
   }
 };
 
-export { create };
+
+export { create};
