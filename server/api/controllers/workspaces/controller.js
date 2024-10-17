@@ -1,9 +1,9 @@
-import { EmailInUseError } from "../../../errors/userError";
 import asyncErrorHandler from "../../../utils/asyncErrorHandler";
-import { created } from "../../helpers/http";
+import { create } from "../../services/users.service";
 
 const registerUser = asyncErrorHandler(async (req, res, next) => {
-  throw new EmailInUseError();
+  const result = await create(req.body);
+  res.status(201).json({ message: "Success", data: result });
 });
 
 export { registerUser };
