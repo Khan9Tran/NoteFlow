@@ -1,9 +1,9 @@
 import { EmailInUseError } from "../../../errors/userError";
 import asyncErrorHandler from "../../../utils/asyncErrorHandler";
-import { created } from "../../helpers/http";
+import { created, noContent } from "../../helpers/http";
 
 const registerUser = asyncErrorHandler(async (req, res, next) => {
-  throw new EmailInUseError();
+  return noContent();
 });
 
 export { registerUser };
