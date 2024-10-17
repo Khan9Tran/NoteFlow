@@ -1,15 +1,9 @@
-import asyncErrorHandler from "../../../utils/asyncErrorHandler.js";
-import { created, noContent } from "../../helpers/http.js";
+import asyncErrorHandler from "../../../utils/asyncErrorHandler";
+import { create } from "../../services/users.service";
 
 const registerUser = asyncErrorHandler(async (req, res, next) => {
-  return noContent();
+  const result = await create(req.body);
+  res.status(201).json({ message: "Success", data: result });
 });
 
-const loginUser = asyncErrorHandler(async (req, res, next) => {
-  const { email, password } = req.body;
-  
-
-  res.status(200).json({ message: 'Đăng nhập thành công' });
-});
-
-export { registerUser, loginUser };
+export { registerUser };

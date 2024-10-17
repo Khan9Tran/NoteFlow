@@ -1,8 +1,6 @@
-import { User } from "../../models/user.schema.js";
-import l from "../../common/logger.js";
-import { EmailInUseError } from "../../errors/userError.js";
-import _ from 'lodash'
-import { hashPassword } from "../../security/bcryptPassword.js";
+import { User } from "../../models/user.schema";
+import l from "../../common/logger";
+import AppError from "../../utils/AppError";
 
 const create = async (userData) => {
   l.info(`create account with: ${userData.email}`);
@@ -10,12 +8,11 @@ const create = async (userData) => {
   
   const u = await User.findOne({ email: userData.email });
   if (u) {
-    throw new EmailInUseError();
+    throw new AppError("User already exists", 400);
   }
-  
-  u =  _.pick(userData, ['name', 'email']);
-  u.password = await hashPassword(userData.password)
-  return await u.save();
+
+  const user = new User(userData);
+  return await user.save();
 }
 
 export { create };
