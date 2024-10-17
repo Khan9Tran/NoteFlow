@@ -5,6 +5,7 @@ import AppError from "../../utils/AppError";
 const create = async (userData) => {
   l.info(`create account with: ${userData.email}`);
 
+  
   const u = await User.findOne({ email: userData.email });
   if (u) {
     throw new AppError("User already exists", 400);
