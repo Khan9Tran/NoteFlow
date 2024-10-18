@@ -12,7 +12,8 @@ import {
   removePageFromWorkspace,
   updateWorkspace,
 } from "./controller.js";
-
+import validate from "../../middlewares/validate.js";
+import { createWorkspaceRequest } from "../../validators/workspace/createWorkspaceRquest.js";
 
 export default express
   .Router()
@@ -20,7 +21,7 @@ export default express
   .get("/:workspaceId/pages/root", getAllRootPages)
   .get("/:workspaceId/pages/:pageId/childrens", getChildrenPageByPageRefecence)
   .get("/:workspaceId", getWorkspaceById)
-  .post("/", createWorkspace)
+  .post("/",validate(createWorkspaceRequest) , createWorkspace)
   .post("/:workspaceId/members", addMemberToWorkspace)
   .post("/:workspaceId/pages", addPageToWorkspace)
   .patch("/:workspaceId", updateWorkspace)

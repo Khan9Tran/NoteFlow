@@ -1,7 +1,8 @@
 import asyncErrorHandler from "../../../utils/asyncErrorHandler.js";
+import { create } from "../../services/workspaces.service.js";
 
 const createWorkspace = asyncErrorHandler(async (req, res, next) => {
-  return;
+  return create(req.body, req.user);
   //return create trả về workspace id ở service, không dùng req (dùng user id từ token)
   //response: create -> workspace id
 });

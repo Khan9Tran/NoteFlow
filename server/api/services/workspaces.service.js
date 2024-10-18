@@ -1,4 +1,5 @@
 import { Workspace } from "../../models/workspace.schema.js";
+import { created } from "../helpers/http.js";
 
 const createFirstWorkspace = async (userId, userName) => {
   const newWorkspace = new Workspace({
@@ -9,4 +10,16 @@ const createFirstWorkspace = async (userId, userName) => {
   return await newWorkspace.save();
 };
 
-export { createFirstWorkspace };
+
+const create = async (payload, user) => {
+  const newWorkspace = new Workspace({
+    name: payload.name,
+    owner: user._id,
+    members: [{ userId: user._id, role: "admin" }],
+  });
+
+  const result = await newWorkspace.save();
+  return created(result._id);
+}
+
+export { createFirstWorkspace, create };
