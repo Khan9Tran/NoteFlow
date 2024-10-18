@@ -14,4 +14,4 @@ const getUserInfo = asyncErrorHandler(async (req, res, next) => {
   return getUserById(req.params.id);
 });
 
-export { registerUser, loginUser, getUserInfo};
+export { registerUser, loginUser, getUserInfo };

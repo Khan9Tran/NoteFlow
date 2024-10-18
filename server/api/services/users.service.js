@@ -58,7 +58,7 @@ const getUserById = async (userId) => {
       populate: {
         path: "pages", // Populate the pages within each workspace
         model: "Page",
-        select: "-content"
+        select: "-content",
       },
     });
 
