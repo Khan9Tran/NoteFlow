@@ -1,7 +1,6 @@
 import * as express from "express";
 import {
   registerUser,
-  loginUser,
   getUserInfo,
   addWorkspaceByUserId,
   getWorkspaceAccess,
@@ -17,7 +16,6 @@ import { userLoginRequest } from "../../validators/user/loginRequest.js";
 export default express
   .Router()
   .post("/", validate(userRegisterRequest), registerUser)
-  .post("/login", validate(userLoginRequest), loginUser)
   .get("/:id", getUserInfo)
   .get("/:id/workspaces-access", getWorkspaceAccess)
   .post(":id/workspaces-access", addWorkspaceByUserId)
