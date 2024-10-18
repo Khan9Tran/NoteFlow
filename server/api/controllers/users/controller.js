@@ -24,6 +24,7 @@ const addWorkspaceByUserId = asyncErrorHandler(async (req, res, next) => {
 });
 
 //Xoá workspace của một user
+// check owner 
 const removeWorkspaceByUserId = asyncErrorHandler(async (req, res, next) => {
   return;
 
@@ -33,6 +34,7 @@ const removeWorkspaceByUserId = asyncErrorHandler(async (req, res, next) => {
 
 
 //Lấy thông tin tất cả workspace của một user
+// check owner
 const getWorkspaceAccess = asyncErrorHandler(async (req, res, next) => {
   return;
   // request userId

@@ -7,6 +7,7 @@ import {
   getTaskById,
   updateComment,
   updateTask,
+  updateTaskStatus,
 } from "./controller.js";
 
 export default express
@@ -14,6 +15,7 @@ export default express
   .get("/:taskId", getTaskById)
   .post("/", createTask)
   .patch("/:taskId", updateTask)
+  .patch("/:taskId/status", updateTaskStatus)
   .delete("/:taskId", deleteTask)
   .post("/:taskId/comments", addComment)
   .patch("/:taskId/comments/:commentId", updateComment)
