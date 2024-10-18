@@ -39,7 +39,7 @@ const introspect = async (decoded) => {
     const currentTime = Math.floor(Date.now() / 1000);
     console.log(currentTime);
     if (decoded.exp && decoded.exp < currentTime) {
-      throw new Error("Token đã hết hạn");
+      throw new UnauthorizedError();
     }
 
     const user = await User.findOne({ email: decoded.sub });
