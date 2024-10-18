@@ -2,11 +2,13 @@ import { User } from "../../models/user.schema.js";
 import { EmailInUseError, UserNotFoundError } from "../../errors/userError.js";
 import _ from "lodash";
 import { hashPassword } from "../../security/bcryptPassword.js";
-import { created, ok } from "../helpers/http.js";
+import { created, noContent, ok, serverError } from "../helpers/http.js";
 import mongoose from "mongoose";
 import logger from "../../common/logger.js";
 import { createFirstPage } from "./pages.service.js";
 import { createFirstWorkspace } from "./workspaces.service.js";
+import { WorkspaceNotFoundError } from "../../errors/workspaceError.js";
+import { Page } from "../../models/page.schema.js";
 
 // Hàm tạo người dùng
 const createUser = async (userData) => {
@@ -70,10 +72,35 @@ const getUserById = async (userId) => {
 };
 
 const removeWorkspace = async (user, workspaceId) => {
-  const workspace = await Workspace.findById(workspaceId);
-  if (!workspace) {
-    throw new WorkspaceNotFoundError();
-  }
-}
+  try {
+    const workspace = await Workspace.findById(workspaceId);
+    if (!workspace) {
+      throw new WorkspaceNotFoundError();
+    }
 
-export { create, getUserById, removeWorkspace };
+    await Page.deleteMany({ workspaceId: workspaceId });
+
+    await Workspace.deleteOne({ _id: workspaceId });
+
+    await User.updateOne(
+      { _id: user._id },
+      { $pull: { workspaces: workspaceId } }
+    );
+  } catch (error) {
+    logger.error(error);
+    throw serverError();
+  }
+  return noContent();
+};
+
+const update = async (user, payload) => {
+  try {
+    await User.updateOne({ _id: user._id }, payload);
+  } catch (error) {
+    logger.error(error);
+    throw serverError();
+  }
+  return ok(user);
+};
+
+export { create, getUserById, removeWorkspace, update };

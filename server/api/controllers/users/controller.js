@@ -1,10 +1,5 @@
-import { remove } from "lodash";
 import asyncErrorHandler from "../../../utils/asyncErrorHandler.js";
-import { create, getUserById } from "../../services/users.service.js";
-
-const registerUser = asyncErrorHandler(async (req, res, next) => {
-  return create(req.body);
-});
+import { getUserById } from "../../services/users.service.js";
 
 const getUserInfo = asyncErrorHandler(async (req, res, next) => {
   return getUserById(req.params.id);
@@ -34,9 +29,7 @@ const getWorkspaceAccess = asyncErrorHandler(async (req, res, next) => {
 
 //Patch user info
 const updateUser = asyncErrorHandler(async (req, res, next) => {
-  return;
-  //req: attribute need to update
-  //res: ok -> updated user
+  return update(req.user, req.body);
 });
 
 //Patch profile picture
@@ -54,7 +47,6 @@ const deleteUser = asyncErrorHandler(async (req, res, next) => {
 });
 
 export {
-  registerUser,
   getUserInfo,
   addWorkspaceByUserId,
   removeWorkspaceByUserId,
