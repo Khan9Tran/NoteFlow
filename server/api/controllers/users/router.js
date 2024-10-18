@@ -1,4 +1,5 @@
 import * as express from "express";
+import ownershipMiddleware from "../../middlewares/ownershipMiddleware.js";
 import {
   registerUser,
   loginUser,
@@ -23,5 +24,5 @@ export default express
   .post(":id/workspaces-access", addWorkspaceByUserId)
   .patch("/:id", updateUser)
   .patch("/:id/profile-picture", updateUserProfilePicture)
-  .delete("/:id/workspaces-access/:workspaceId", removeWorkspaceByUserId)
+  .delete("/:id/workspaces-access/:workspaceId", ownershipMiddleware,removeWorkspaceByUserId)
   .delete("/:id", deleteUser);

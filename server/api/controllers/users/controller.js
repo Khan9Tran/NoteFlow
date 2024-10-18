@@ -1,3 +1,4 @@
+import { remove } from "lodash";
 import asyncErrorHandler from "../../../utils/asyncErrorHandler.js";
 import { create, getUserById } from "../../services/users.service.js";
 
@@ -9,7 +10,6 @@ const getUserInfo = asyncErrorHandler(async (req, res, next) => {
   return getUserById(req.params.id);
 });
 
-//For func share link truy cập in FE
 const addWorkspaceByUserId = asyncErrorHandler(async (req, res, next) => {
   return;
   //req: userId, workspaceId
@@ -19,8 +19,7 @@ const addWorkspaceByUserId = asyncErrorHandler(async (req, res, next) => {
 //Xoá workspace của một user
 // check owner
 const removeWorkspaceByUserId = asyncErrorHandler(async (req, res, next) => {
-  return;
-
+  return removeWorkspace(req.user, req.params.workspaceId);
   //req: userId, workspaceId
   //res: noContent
 });
