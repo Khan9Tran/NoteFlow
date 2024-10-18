@@ -69,8 +69,11 @@ const getUserById = async (userId) => {
   return ok(user); // Return the user object without the password
 };
 
-const removeWorkspace = async (userId, workspaceId) => {
-  
+const removeWorkspace = async (user, workspaceId) => {
+  const workspace = await Workspace.findById(workspaceId);
+  if (!workspace) {
+    throw new WorkspaceNotFoundError();
+  }
 }
 
-export { create, getUserById };
+export { create, getUserById, removeWorkspace };
