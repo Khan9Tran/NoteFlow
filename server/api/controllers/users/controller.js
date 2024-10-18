@@ -10,8 +10,66 @@ const loginUser = asyncErrorHandler(async (req, res, next) => {
   return login(req.body);
 });
 
+
 const getUserInfo = asyncErrorHandler(async (req, res, next) => {
   return getUserById(req.params.id);
 });
 
-export { registerUser, loginUser, getUserInfo };
+
+//For func share link truy cập in FE
+const addWorkspaceByUserId = asyncErrorHandler(async (req, res, next) => {
+  return
+  //req: userId, workspaceId
+  //res: noContent
+});
+
+//Xoá workspace của một user
+const removeWorkspaceByUserId = asyncErrorHandler(async (req, res, next) => {
+  return;
+
+  //req: userId, workspaceId
+  //res: noContent
+});
+
+
+//Lấy thông tin tất cả workspace của một user
+const getWorkspaceAccess = asyncErrorHandler(async (req, res, next) => {
+  return;
+  // request userId
+  // response ok -> all workspace of user
+});
+
+
+//Patch user info
+const updateUser = asyncErrorHandler(async (req, res, next) => {
+  return;
+  //req: attribute need to update
+  //res: ok -> updated user
+});
+
+//Patch profile picture
+const updateUserProfilePicture = asyncErrorHandler(async (req, res, next) => {
+  return;
+  //req: image
+  //res: noContent
+});
+
+
+//Delete user
+const deleteUser = asyncErrorHandler(async (req, res, next) => {
+  return;
+  //req: userId
+  //res: noContent
+});
+
+export {
+  registerUser,
+  loginUser,
+  getUserInfo,
+  addWorkspaceByUserId,
+  removeWorkspaceByUserId,
+  getWorkspaceAccess,
+  updateUser,
+  updateUserProfilePicture,
+  deleteUser
+};
