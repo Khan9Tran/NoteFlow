@@ -1,9 +1,8 @@
 import { User } from "../../models/user.schema.js";
-import { Workspace } from "../../models/workspace.schema.js";
-import { Page } from "../../models/page.schema.js";
-import { EmailInUseError } from "../../errors/userError.js";
+import { EmailInUseError, UserNotFoundError } from "../../errors/userError.js";
 import _ from "lodash";
-import { hashPassword, verifyPassword } from "../../security/bcryptPassword.js";
+import { hashPassword } from "../../security/bcryptPassword.js";
+import { created, ok } from "../helpers/http.js";
 import mongoose from "mongoose";
 import logger from "../../common/logger.js";
 import { createFirstPage } from "./pages.service.js";
@@ -36,15 +35,38 @@ const create = async (userData) => {
     newUser.workspaces.push(workspaceResult._id);
     await newUser.save();
 
-    await createFirstPage(workspaceResult._id);
+    const firstPage = await createFirstPage(workspaceResult._id);
+
+    workspaceResult.pages.push(firstPage._id);
+    await workspaceResult.save();
 
     const userWithoutPassword = _.omit(newUser.toObject(), ["password"]);
-    return created(userWithoutPassword);
+    return created(userWithoutPassword, "Đăng ký thành công");
   } catch (error) {
     logger.error(error);
     throw error;
   }
 };
 
+const getUserById = async (userId) => {
+  logger.info("Getting user info: " + userId);
 
-export { create};
+  const user = await User.findById(userId)
+    .select("-password") // Exclude the password from the response
+    .populate({
+      path: "workspaces",
+      populate: {
+        path: "pages", // Populate the pages within each workspace
+        model: "Page",
+        select: "-content",
+      },
+    });
+
+  if (!user) {
+    throw new UserNotFoundError();
+  }
+
+  return ok(user); // Return the user object without the password
+};
+
+export { create, getUserById };

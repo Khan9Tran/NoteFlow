@@ -20,13 +20,13 @@ const login = async (payload) => {
     }
 
     const token = jwt.sign(
-      { id: user._id, sub: user.email },
+      { sub: user.email, iss: "localhost:3000", scope: user.role },
       "your_jwt_secret",
       { expiresIn: "1h" }
     );
 
     const userWithoutPassword = _.omit(user.toObject(), ["password"]);
-    return ok(token, "login success");
+    return ok({ token: token }, "login success");
   } catch (error) {
     logger.error(error);
     throw error;
