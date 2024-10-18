@@ -1,8 +1,9 @@
 import jwt from "jsonwebtoken";
 import { UnauthorizedError } from "../errors/authError.js";
 import logger from "../common/logger.js";
+import { introspect } from "../api/services/auths.service.js";
 
-const authMiddleware = (req, res, next) => {
+const authMiddleware = async (req, res, next) => {
   var authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     throw new UnauthorizedError("Unauthorized, token not provided");
@@ -18,7 +19,8 @@ const authMiddleware = (req, res, next) => {
     console.log(token);
     // Kiểm tra tính hợp lệ của token
     const decoded = jwt.verify(token, "your_jwt_secret");
-    req.user = introspect(decoded)
+    req.user = await introspect(decoded);
+
     next();
   } catch (error) {
     throw new UnauthorizedError("invalid token");

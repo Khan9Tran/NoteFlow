@@ -4,6 +4,7 @@ import _ from "lodash";
 import logger from "../../common/logger.js";
 import { User } from "../../models/user.schema.js";
 import { ok } from "../helpers/http.js";
+import { UnauthorizedError } from "../../errors/authError.js";
 
 const login = async (payload) => {
   try {
@@ -33,4 +34,24 @@ const login = async (payload) => {
   }
 };
 
-export { login };
+const introspect = async (decoded) => {
+  try {
+    const currentTime = Math.floor(Date.now() / 1000);
+    console.log(currentTime);
+    if (decoded.exp && decoded.exp < currentTime) {
+      throw new UnauthorizedError();
+    }
+
+    const user = await User.findOne({ email: decoded.sub });
+
+    if (!user) {
+      throw new UnauthorizedError();
+    }
+
+    return user;
+  } catch (error) {
+    // throw new Error("error");
+  }
+};
+
+export { login, introspect };
