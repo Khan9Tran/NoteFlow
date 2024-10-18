@@ -42,6 +42,12 @@ const deletePageByWorkspace = asyncErrorHandler(async (req, res, next) => {
   // res: noContent
 });
 
+const getAllTasks = asyncErrorHandler(async (req, res, next) => {
+  return;
+  // req: pageId
+  // res: ok -> tasks
+});
+
 export {
   getPageById,
   getPageContent,
@@ -50,4 +56,5 @@ export {
   updatePageTitle,
   deletePage,
   deletePageByWorkspace,
+  getAllTasks
 };
