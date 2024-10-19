@@ -5,11 +5,10 @@ const ownershipMiddleware = (req, res, next) => {
   const authenticatedUserId = req.user._id.toString();
 
   if (userId !== authenticatedUserId) {
-    throw new UnauthorizedError(
-      "You are not authorized to perform this action"
+    next(
+      new UnauthorizedError("You are not authorized to perform this action")
     );
-  }
-  next();
+  } else next();
 };
 
 export default ownershipMiddleware;

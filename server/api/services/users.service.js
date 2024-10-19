@@ -8,7 +8,8 @@ import logger from "../../common/logger.js";
 import { createFirstPage } from "./pages.service.js";
 import { createFirstWorkspace } from "./workspaces.service.js";
 import { WorkspaceNotFoundError } from "../../errors/workspaceError.js";
-import { Page } from "../../models/page.schema.js";
+import { Workspace } from "../../models/workspace.schema.js";
+import { UnauthorizedError } from "../../errors/authError.js";
 
 // Hàm tạo người dùng
 const createUser = async (userData) => {
@@ -46,7 +47,7 @@ const create = async (userData) => {
     return created(userWithoutPassword, "Đăng ký thành công");
   } catch (error) {
     logger.error(error);
-    throw error;
+    return serverError();
   }
 };
 
@@ -73,34 +74,74 @@ const getUserById = async (userId) => {
 
 const removeWorkspace = async (user, workspaceId) => {
   try {
-    const workspace = await Workspace.findById(workspaceId);
-    if (!workspace) {
-      throw new WorkspaceNotFoundError();
-    }
-
-    await Page.deleteMany({ workspaceId: workspaceId });
-
-    await Workspace.deleteOne({ _id: workspaceId });
-
     await User.updateOne(
       { _id: user._id },
       { $pull: { workspaces: workspaceId } }
     );
   } catch (error) {
     logger.error(error);
-    throw serverError();
+    return serverError();
   }
   return noContent();
 };
 
 const update = async (user, payload) => {
   try {
-    await User.updateOne({ _id: user._id }, payload);
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: user._id },
+      payload,
+      { new: true, runValidators: true }
+    ).select("-password");
+    return ok(updatedUser);
   } catch (error) {
     logger.error(error);
-    throw serverError();
+    return serverError();
   }
-  return ok(user);
 };
 
-export { create, getUserById, removeWorkspace, update };
+const getWorkspace = async (user) => {
+  try {
+    const workspaces = await Workspace.find({ _id: { $in: user.workspaces } });
+    return ok(workspaces);
+  } catch (error) {
+    logger.error(error);
+    return serverError();
+  }
+};
+
+const addWorkspace = async (id, payload, user) => {
+  try {
+    const u = await User.findById(id);
+
+    if (!u) throw new UserNotFoundError();
+
+    const ws = Workspace.findById(payload.workspaceId);
+
+    if (!ws) throw new WorkspaceNotFoundError();
+
+    const isAdmin = ws.members.some(
+      (member) =>
+        member.userId.toString() === user._id.toString() &&
+        member.role === "admin"
+    );
+
+    if (!isAdmin)
+      throw new UnauthorizedError("You are not an admin of this workspace");
+
+    u.workspaces.push(ws._id);
+
+    return ok(await u.save());
+  } catch (error) {
+    logger.error(error);
+    return serverError();
+  }
+};
+
+export {
+  create,
+  getUserById,
+  removeWorkspace,
+  update,
+  getWorkspace,
+  addWorkspace,
+};

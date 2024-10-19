@@ -1,14 +1,12 @@
 import asyncErrorHandler from "../../../utils/asyncErrorHandler.js";
-import { getUserById } from "../../services/users.service.js";
+import { getUserById, removeWorkspace, update } from "../../services/users.service.js";
 
 const getUserInfo = asyncErrorHandler(async (req, res, next) => {
   return getUserById(req.params.id);
 });
 
 const addWorkspaceByUserId = asyncErrorHandler(async (req, res, next) => {
-  return;
-  //req: userId, workspaceId
-  //res: noContent
+  return addWorkspace(req.params.id, req.body, req.user);
 });
 
 //Xoá workspace của một user
@@ -20,11 +18,8 @@ const removeWorkspaceByUserId = asyncErrorHandler(async (req, res, next) => {
 });
 
 //Lấy thông tin tất cả workspace của một user
-// check owner
 const getWorkspaceAccess = asyncErrorHandler(async (req, res, next) => {
-  return;
-  // request userId
-  // response ok -> all workspace of user
+  return getWorkspaceAccess(req.user);
 });
 
 //Patch user info
