@@ -2,7 +2,7 @@ import _ from "lodash";
 import { WorkspaceNotFoundError } from "../../errors/workspaceError.js";
 import { Page } from "../../models/page.schema.js";
 import { Workspace } from "../../models/workspace.schema.js";
-import { created, forbidden } from "../helpers/http.js";
+import { created, forbidden, ok } from "../helpers/http.js";
 import { ForbiddenError } from "../../errors/authError.js";
 const createFirstPage = async (workspaceId) => {
   const firstPage = new Page({
@@ -46,4 +46,70 @@ const createNewPage = async (payload, user, next) => {
   return created(await newPage.save());
 };
 
-export { createFirstPage, createNewPage };
+const getById = async (req, res, next) => {
+  const id = req.params.pageId;
+  const user = req.user;
+
+  //Không lấy content của page
+  var page = await Page.findOne({ _id: id });
+
+  if (!page) {
+    next(new PageNotFoundError());
+  }
+
+  if (!user.workspaces.includes(page.workspaceId)) {
+    next(new ForbiddenError("You are not allowed to access this page"));
+  }
+
+  page = _.omit(page.toObject(), ["content"]);
+
+  return ok({ page: page });
+};
+
+const getPageContentById = async (req, res, next) => {
+  const id = req.params.pageId;
+  const user = req.user;
+  const page = await Page.findOne({ _id: id });
+
+  if (!page) {
+    next(new PageNotFoundError());
+  }
+
+  if (!user.workspaces.includes(page.workspaceId)) {
+    next(new ForbiddenError("You are not allowed to access this page"));
+  }
+
+  return ok({ content: page.content });
+};
+
+const updateTitle = async (req, res, next) => {
+  const id = req.params.pageId;
+  const payload = req.body;
+  const user = req.user;
+
+  const page = await Page.findOne({ _id: id });
+
+  console.log("payload: " + payload.title);
+
+  if (!user.workspaces.includes(page.workspaceId)) {
+    next(new ForbiddenError("You are not allowed to access this page"));
+  }
+
+  if (!page) {
+    next(new PageNotFoundError());
+  }
+
+  page.title = payload.title;
+
+  await page.save();
+
+  return ok({ page: _.omit(page.toObject(), ["content"]) });
+};
+
+export {
+  createFirstPage,
+  createNewPage,
+  getById,
+  getPageContentById,
+  updateTitle,
+};

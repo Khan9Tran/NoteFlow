@@ -11,6 +11,7 @@ import {
 } from "./controller.js";
 import validate from "../../middlewares/validate.js";
 import { createNewPageRequest } from "../../validators/page/createNewPageRequest.js";
+import { updateTitleRequest } from "../../validators/page/updateTitleRequest.js";
 
 export default express
   .Router()
@@ -19,6 +20,6 @@ export default express
   .get("/:pageId/tasks", getAllTasks)
   .post("/", validate(createNewPageRequest), createPage)
   .patch("/:pageId/content", updatePageContent)
-  .patch("/:pageId/title", updatePageTitle)
+  .patch("/:pageId/title", validate(updateTitleRequest), updatePageTitle)
   .delete("/:pageId", deletePage)
   .delete("/all/:workspaceId", deletePageByWorkspace);
