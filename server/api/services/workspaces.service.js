@@ -1,9 +1,12 @@
 import mongoose from "mongoose";
 import { UnauthorizedError } from "../../errors/authError.js";
 import { Workspace } from "../../models/workspace.schema.js";
-import { created, ok } from "../helpers/http.js";
+import { Page } from "../../models/page.schema.js";
+import { created, noContent, ok } from "../helpers/http.js";
 import { User } from "../../models/user.schema.js";
-
+import { WorkspaceNotFoundError } from "../../errors/workspaceError.js";
+import { UserIsExistError, UserNotFoundError } from "../../errors/userError.js";
+import { PageNotFoundError } from "../../errors/pageError.js";
 const createFirstWorkspace = async (userId, userName) => {
   const newWorkspace = new Workspace({
     name: `${userName}'s Workspace`,
@@ -26,22 +29,21 @@ const create = async (payload, user) => {
 
 const addMember = async (payload, workspaceId) => {
   const user = await User.findOne({ _id: payload._id });
-  console.log(user);
+
   if (!user) {
-    console.log("k có");
+    throw new UserNotFoundError();
   }
-  console.log(workspaceId);
-  // const objectId = new mongoose.Types.ObjectId(workspaceId);
+
   const workspace = await Workspace.findById(workspaceId);
   if (!workspace) {
-    console.log("k có");
+    throw new WorkspaceNotFoundError();
   }
 
   const memberExists = workspace.members.some((member) =>
     member.userId.equals(user._id)
   );
   if (memberExists) {
-    return { error: "User is already a member of this workspace." };
+    throw new UserIsExistError();
   }
 
   workspace.members.push({ userId: user._id, role: "member" });
@@ -53,50 +55,49 @@ const addMember = async (payload, workspaceId) => {
   });
 };
 
-const getAllMembersByWorkspace = async (workspaceId) => {
+const getallMembers = async (workspaceId) => {
   const workspace = await Workspace.findById(workspaceId).populate(
     "members.userId",
     "name email"
   );
   if (!workspace) {
-    throw new NotFoundError("Workspace not found");
+    throw new WorkspaceNotFoundError();
   }
   return ok(workspace.members);
 };
 
-const deleteWorkspace = async (workspaceId) => {
+const deleteworkspace = async (workspaceId) => {
   const workspace = await Workspace.findById(workspaceId);
   if (!workspace) {
-    throw new NotFoundError("Workspace not found");
+    throw new WorkspaceNotFoundError();
   }
-  await workspace.remove();
-  return noContent();
+  await Workspace.deleteOne({ _id: workspaceId });
+  return ok(noContent(), "delete success");
 };
 
-const getWorkspaceById = async (workspaceId) => {
+const getWbById = async (workspaceId) => {
   const workspace = await Workspace.findById(workspaceId);
   if (!workspace) {
-    throw new NotFoundError("Workspace not found");
+    throw new WorkspaceNotFoundError();
   }
   return ok(workspace);
 };
 
-// Lấy tất cả trang gốc (root pages) trong workspace
-const getAllRootPages = async (workspaceId) => {
+const getRootPages = async (workspaceId) => {
   const workspace = await Workspace.findById(workspaceId).populate(
     "pages",
     "title"
   );
   if (!workspace) {
-    throw new NotFoundError("Workspace not found");
+    throw new WorkspaceNotFoundError();
   }
   return ok(workspace.pages);
 };
 
-const getChildrenPageByPageReference = async (pageId) => {
-  const page = await Page.findById(pageId).populate("childrens", "title");
+const getChildPageByPageReference = async (pageId) => {
+  const Page = await Page.findById(pageId).populate("childrens", "title");
   if (!page) {
-    throw new NotFoundError("Page not found");
+    throw new PageNotFoundError();
   }
   return ok(page.childrens);
 };
@@ -152,4 +153,13 @@ const removeMemberFromWorkspace = async (workspaceId, memberId) => {
   return noContent();
 };
 
-export { createFirstWorkspace, create, addMember };
+export {
+  createFirstWorkspace,
+  create,
+  addMember,
+  getallMembers,
+  deleteworkspace,
+  getWbById,
+  getRootPages,
+  getChildPageByPageReference,
+};

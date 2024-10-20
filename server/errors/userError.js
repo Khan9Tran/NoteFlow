@@ -16,6 +16,13 @@ class UserNotFoundError extends AppError {
   }
 }
 
+class UserIsExistError extends AppError {
+  constructor() {
+    super("User is already a member of this workspace.", 404);
+    this.name = "UserIsExistError";
+  }
+}
+
 // Lỗi yêu cầu không hợp lệ
 class BadRequestError extends AppError {
   constructor(message = "Bad request") {
@@ -24,4 +31,9 @@ class BadRequestError extends AppError {
   }
 }
 
-export { EmailInUseError, UserNotFoundError, BadRequestError };
+export {
+  EmailInUseError,
+  UserNotFoundError,
+  BadRequestError,
+  UserIsExistError,
+};

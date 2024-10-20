@@ -1,5 +1,13 @@
 import asyncErrorHandler from "../../../utils/asyncErrorHandler.js";
-import { addMember, create } from "../../services/workspaces.service.js";
+import {
+  addMember,
+  create,
+  getallMembers,
+  deleteworkspace,
+  getWbById,
+  getRootPages,
+  getChildPageByPageReference,
+} from "../../services/workspaces.service.js";
 
 const createWorkspace = asyncErrorHandler(async (req, res, next) => {
   return create(req.body, req.user);
@@ -14,33 +22,33 @@ const addMemberToWorkspace = asyncErrorHandler(async (req, res, next) => {
 });
 
 const getAllMemberByWorkSpace = asyncErrorHandler(async (req, res, next) => {
-  return;
+  return getallMembers(req.params.workspaceId);
   // request: workspace id từ req
   //response: ok -> list member
 });
 
 const deleteWorkspace = asyncErrorHandler(async (req, res, next) => {
-  return;
+  return deleteworkspace(req.params.workspaceId);
   // request: workspace id từ req
   //response: noContent
 });
 
 const getWorkspaceById = asyncErrorHandler(async (req, res, next) => {
-  return;
+  return getWbById(req.params.workspaceId);
   // request: workspace id từ req
   //response: ok -> workspace
 });
 
 //All page cha từ workspace
 const getAllRootPages = asyncErrorHandler(async (req, res, next) => {
-  return;
+  return getRootPages(req.params.workspaceId);
   // request: workspace id từ req
   //response: ok -> list root pages
 });
 
 const getChildrenPageByPageRefecence = asyncErrorHandler(
   async (req, res, next) => {
-    return;
+    // return getChildPageByPageReference(req.params.pageId);
     // request: page id từ req
     //response: ok -> list children pages
   }
