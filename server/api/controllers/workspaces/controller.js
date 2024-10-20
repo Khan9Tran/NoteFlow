@@ -1,5 +1,5 @@
 import asyncErrorHandler from "../../../utils/asyncErrorHandler.js";
-import { create } from "../../services/workspaces.service.js";
+import { addMember, create } from "../../services/workspaces.service.js";
 
 const createWorkspace = asyncErrorHandler(async (req, res, next) => {
   return create(req.body, req.user);
@@ -8,7 +8,7 @@ const createWorkspace = asyncErrorHandler(async (req, res, next) => {
 });
 
 const addMemberToWorkspace = asyncErrorHandler(async (req, res, next) => {
-  return;
+  return addMember(req.body, req.params.workspaceId);
   // request: name workspace từ req, userId từ token
   //response: create -> {name workspace, list member}
 });
