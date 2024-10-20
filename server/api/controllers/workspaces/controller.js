@@ -19,32 +19,32 @@ const createWorkspace = asyncErrorHandler(async (req, res, next) => {
 });
 
 const addMemberToWorkspace = asyncErrorHandler(async (req, res, next) => {
-  return addMember(req.body, req.params.workspaceId);
+  return addMember(req.body, req.params.workspaceId, next);
   // request: name workspace từ req, userId từ token
   //response: create -> {name workspace, list member}
 });
 
 const getAllMemberByWorkSpace = asyncErrorHandler(async (req, res, next) => {
-  return getallMembers(req.params.workspaceId);
+  return getallMembers(req.params.workspaceId, next);
   // request: workspace id từ req
   //response: ok -> list member
 });
 
 const deleteWorkspace = asyncErrorHandler(async (req, res, next) => {
-  return deleteworkspace(req.params.workspaceId);
+  return deleteworkspace(req.params.workspaceId, next);
   // request: workspace id từ req
   //response: noContent
 });
 
 const getWorkspaceById = asyncErrorHandler(async (req, res, next) => {
-  return getWbById(req.params.workspaceId);
+  return getWbById(req.params.workspaceId, next);
   // request: workspace id từ req
   //response: ok -> workspace
 });
 
 //All page cha từ workspace
 const getAllRootPages = asyncErrorHandler(async (req, res, next) => {
-  return getRootPages(req.params.workspaceId);
+  return getRootPages(req.params.workspaceId, next);
   // request: workspace id từ req
   //response: ok -> list root pages
 });
@@ -55,7 +55,7 @@ const getChildrenPageByPageRefecence = asyncErrorHandler(
 
 //Them 1 page vao workspace
 const addPageToWorkspace = asyncErrorHandler(async (req, res, next) => {
-  return addPagetoWb(req.body, req.params.workspaceId);
+  return addPagetoWb(req.body, req.params.workspaceId, next);
   // request: page title va page refecence từ req, workspace id từ req
   //response: create -> page id
 });
@@ -68,13 +68,13 @@ const updateWorkspace = asyncErrorHandler(async (req, res, next) => {
 });
 
 const removePageFromWorkspace = asyncErrorHandler(async (req, res, next) => {
-  return removePageFromWb(req.params.pageId);
+  return removePageFromWb(req.params.pageId, next);
   // request: page id từ req
   //response: noContent
 });
 
 const removeMemberFromWorkspace = asyncErrorHandler(async (req, res, next) => {
-  return removeMemberFromWb(req.params.workspaceId, req.params.memberId);
+  return removeMemberFromWb(req.params.workspaceId, req.params.memberId, next);
   // request: member id từ req
   //response: noContent
 });
