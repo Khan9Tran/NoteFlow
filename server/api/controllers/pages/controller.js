@@ -1,5 +1,5 @@
 import asyncErrorHandler from "../../../utils/asyncErrorHandler.js";
-import { createNewPage, getById, getPageContentById, updateTitle , deletePageById} from "../../services/pages.service.js";
+import { createNewPage, getById, getPageContentById, updateTitle , deletePageById, deletePageByWorkspaceId} from "../../services/pages.service.js";
 
 //check user has workspace access
 const getPageById = asyncErrorHandler(async (req, res, next) => {
@@ -37,9 +37,7 @@ const deletePage = asyncErrorHandler(async (req, res, next) => {
 
 //check admin or owner of the workspace
 const deletePageByWorkspace = asyncErrorHandler(async (req, res, next) => {
-  return;
-  // req: workspaceId
-  // res: noContent
+  return deletePageByWorkspaceId(req, res, next);
 });
 
 //check user has workspace access

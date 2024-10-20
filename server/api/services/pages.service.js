@@ -133,6 +133,28 @@ const deletePageById = async (req, res, next) => {
   return noContent();
 };
 
+const deletePageByWorkspaceId = async (req, res, next) => {
+  const id = req.params.workspaceId;
+  const user = req.user;
+
+  if (!user.workspaces.includes(id)) {
+    next(new ForbiddenError("You are not allowed to access this page"));
+  }
+
+  const workspace = await Workspace.findOne({ _id: id });
+
+  const admin = workspace.members.filter(
+    (member) => member.userId.equals(user._id) && member.role === "admin"
+  );
+
+  if (admin.length === 0) {
+    next(new ForbiddenError("You are not allowed to delete a page"));
+  }
+
+  await Page.deleteMany({ workspaceId: id });
+
+  return noContent();
+};
 export {
   createFirstPage,
   createNewPage,
@@ -140,4 +162,5 @@ export {
   getPageContentById,
   updateTitle,
   deletePageById,
+  deletePageByWorkspaceId,
 };
