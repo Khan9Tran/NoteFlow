@@ -94,22 +94,15 @@ const getRootPages = async (workspaceId) => {
   return ok(workspace.pages);
 };
 
-const getChildPageByPageReference = async (pageId) => {
-  const Page = await Page.findById(pageId).populate("childrens", "title");
-  if (!page) {
-    throw new PageNotFoundError();
-  }
-  return ok(page.childrens);
-};
-
-const addPageToWorkspace = async (payload, workspaceId) => {
+const addPagetoWb = async (payload, workspaceId) => {
   const workspace = await Workspace.findById(workspaceId);
   if (!workspace) {
-    throw new NotFoundError("Workspace not found");
+    throw new WorkspaceNotFoundError();
   }
   const newPage = new Page({
     title: payload.title,
     reference: payload.reference,
+    workspaceId: workspaceId,
   });
   await newPage.save();
 
@@ -126,23 +119,23 @@ const updateWorkspace = async (workspaceId, updateFields) => {
     { new: true }
   );
   if (!workspace) {
-    throw new NotFoundError("Workspace not found");
+    throw new WorkspaceNotFoundError();
   }
   return ok(workspace);
 };
 
-const removePageFromWorkspace = async (pageId) => {
-  const page = await Page.findByIdAndRemove(pageId);
+const removePageFromWb = async (pageId) => {
+  const page = await Page.findByIdAndDelete(pageId);
   if (!page) {
-    throw new NotFoundError("Page not found");
+    throw new PageNotFoundError();
   }
-  return noContent();
+  return ok(noContent(), "delete success");
 };
 
-const removeMemberFromWorkspace = async (workspaceId, memberId) => {
+const removeMemberFromWb = async (workspaceId, memberId) => {
   const workspace = await Workspace.findById(workspaceId);
   if (!workspace) {
-    throw new NotFoundError("Workspace not found");
+    throw new WorkspaceNotFoundError();
   }
 
   workspace.members = workspace.members.filter(
@@ -150,7 +143,7 @@ const removeMemberFromWorkspace = async (workspaceId, memberId) => {
   );
   await workspace.save();
 
-  return noContent();
+  return ok(noContent(), "delete success");
 };
 
 export {
@@ -161,5 +154,7 @@ export {
   deleteworkspace,
   getWbById,
   getRootPages,
-  getChildPageByPageReference,
+  addPagetoWb,
+  removePageFromWb,
+  removeMemberFromWb,
 };

@@ -21,7 +21,7 @@ export default express
   .get("/:workspaceId/pages/root", getAllRootPages)
   .get("/:workspaceId/pages/:pageId/childrens", getChildrenPageByPageRefecence)
   .get("/:workspaceId", getWorkspaceById)
-  .post("/",validate(createWorkspaceRequest) , createWorkspace)
+  .post("/", validate(createWorkspaceRequest), createWorkspace)
   .post("/:workspaceId/members", addMemberToWorkspace)
   .post("/:workspaceId/pages", addPageToWorkspace)
   .patch("/:workspaceId", updateWorkspace)
