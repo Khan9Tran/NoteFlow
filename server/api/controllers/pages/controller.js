@@ -17,7 +17,7 @@ const getPageContent = asyncErrorHandler(async (req, res, next) => {
 
 //check user has workspace access
 const createPage = asyncErrorHandler(async (req, res, next) => {
-  return createNewPage(req.body, req.user);
+  return createNewPage(req.body, req.user, next);
 });
 
 

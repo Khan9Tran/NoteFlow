@@ -1,8 +1,9 @@
-import { ForbiddenError } from "../../errors/authError.js";
+import _ from "lodash";
 import { WorkspaceNotFoundError } from "../../errors/workspaceError.js";
 import { Page } from "../../models/page.schema.js";
 import { Workspace } from "../../models/workspace.schema.js";
-import { created } from "../helpers/http.js";
+import { created, forbidden } from "../helpers/http.js";
+import { ForbiddenError } from "../../errors/authError.js";
 const createFirstPage = async (workspaceId) => {
   const firstPage = new Page({
     workspaceId: workspaceId,
@@ -17,19 +18,28 @@ const createFirstPage = async (workspaceId) => {
   return await firstPage.save();
 };
 
-const createNewPage = async (payload, user) => {
-  const wsId = payload.workspaceId;
-  const workspace = await Workspace.findById(wsId);
+const createNewPage = async (payload, user, next) => {
+  const wsId = _.get(payload, "workspaceId");
+  const workspace = await Workspace.findOne({ _id: wsId });
+
+  console.log("your id: " + user._id);
+  console.log("workspace id: " + wsId);
+
   if (!workspace) {
-    throw new WorkspaceNotFoundError();
+    next(new WorkspaceNotFoundError());
   }
 
+  workspace.members.forEach((member) => {
+    console.log(member.userId.toString());
+    console.log(member.role);
+  });
+
   const admin = workspace.members.filter(
-    (member) => member.userId === user.id && member.role === "admin"
+    (member) => member.userId.equals(user._id) && member.role === "admin"
   );
 
   if (admin.length === 0) {
-    throw new ForbiddenError();
+    next(new ForbiddenError("You are not allowed to create a page"));
   }
 
   const newPage = new Page(payload);
