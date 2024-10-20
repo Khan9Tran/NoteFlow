@@ -7,4 +7,11 @@ class WorkspaceNotFoundError extends AppError {
   }
 }
 
-export { WorkspaceNotFoundError };
+class WorkspaceHasBeenAddedError extends AppError {
+  constructor(message = "Workspace Has Been Added Error") {
+    super(message, 400);
+    this.name = "WorkspaceHasBeenAddedError";
+  }
+}
+
+export { WorkspaceNotFoundError, WorkspaceHasBeenAddedError };

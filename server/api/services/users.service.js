@@ -7,7 +7,10 @@ import mongoose from "mongoose";
 import logger from "../../common/logger.js";
 import { createFirstPage } from "./pages.service.js";
 import { createFirstWorkspace } from "./workspaces.service.js";
-import { WorkspaceNotFoundError } from "../../errors/workspaceError.js";
+import {
+  WorkspaceHasBeenAddedError,
+  WorkspaceNotFoundError,
+} from "../../errors/workspaceError.js";
 import { Workspace } from "../../models/workspace.schema.js";
 import { UnauthorizedError } from "../../errors/authError.js";
 
@@ -22,11 +25,11 @@ const createUser = async (userData) => {
   return newUser;
 };
 
-const create = async (userData) => {
+const create = async (userData, next) => {
   try {
     let existingUser = await User.findOne({ email: userData.email });
     if (existingUser) {
-      throw new EmailInUseError();
+      next(new EmailInUseError());
     }
 
     const newUser = await createUser(userData);
@@ -66,13 +69,13 @@ const getUserById = async (userId) => {
     });
 
   if (!user) {
-    throw new UserNotFoundError();
+    next(new UserNotFoundError());
   }
 
   return ok(user); // Return the user object without the password
 };
 
-const removeWorkspace = async (user, workspaceId) => {
+const removeWorkspace = async (user, workspaceId, next) => {
   try {
     await User.updateOne(
       { _id: user._id },
@@ -109,16 +112,17 @@ const getWorkspace = async (user) => {
   }
 };
 
-const addWorkspace = async (id, payload, user) => {
+const addWorkspace = async (id, payload, user, next) => {
   try {
     const u = await User.findById(id);
 
-    if (!u) throw new UserNotFoundError();
+    if (!u) next(new UserNotFoundError());
 
-    const ws = Workspace.findById(payload.workspaceId);
+    const ws = await Workspace.findOne({ _id: payload.workspaceId });
 
-    if (!ws) throw new WorkspaceNotFoundError();
+    if (!ws) next(new WorkspaceNotFoundError());
 
+    logger.info("Adding workspace to user: " + ws);
     const isAdmin = ws.members.some(
       (member) =>
         member.userId.toString() === user._id.toString() &&
@@ -126,7 +130,9 @@ const addWorkspace = async (id, payload, user) => {
     );
 
     if (!isAdmin)
-      throw new UnauthorizedError("You are not an admin of this workspace");
+      next(new UnauthorizedError("You are not an admin of this workspace"));
+
+    if (u.workspaces.includes(ws._id)) next(new WorkspaceHasBeenAddedError());
 
     u.workspaces.push(ws._id);
 
@@ -137,7 +143,7 @@ const addWorkspace = async (id, payload, user) => {
   }
 };
 
-const getUsers = async (query) => {
+const getUsers = async (query, next) => {
   const limit = parseInt(query.limit) || 10; // Số lượng kết quả trên mỗi trang
   const page = parseInt(query.page) || 1; // Trang hiện tại
   const skip = (page - 1) * limit; // Bỏ qua kết quả (skip)
