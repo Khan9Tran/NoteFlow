@@ -1,5 +1,8 @@
+import { ForbiddenError } from "../../errors/authError.js";
+import { WorkspaceNotFoundError } from "../../errors/workspaceError.js";
 import { Page } from "../../models/page.schema.js";
-
+import { Workspace } from "../../models/workspace.schema.js";
+import { created } from "../helpers/http.js";
 const createFirstPage = async (workspaceId) => {
   const firstPage = new Page({
     workspaceId: workspaceId,
@@ -14,4 +17,23 @@ const createFirstPage = async (workspaceId) => {
   return await firstPage.save();
 };
 
-export { createFirstPage };
+const createNewPage = async (payload, user) => {
+  const wsId = payload.workspaceId;
+  const workspace = await Workspace.findById(wsId);
+  if (!workspace) {
+    throw new WorkspaceNotFoundError();
+  }
+
+  const admin = workspace.members.filter(
+    (member) => member.userId === user.id && member.role === "admin"
+  );
+
+  if (admin.length === 0) {
+    throw new ForbiddenError();
+  }
+
+  const newPage = new Page(payload);
+  return created(await newPage.save());
+};
+
+export { createFirstPage, createNewPage };

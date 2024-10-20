@@ -1,4 +1,5 @@
 import asyncErrorHandler from "../../../utils/asyncErrorHandler.js";
+import { createNewPage } from "../../services/pages.service.js";
 
 //check user has workspace access
 const getPageById = asyncErrorHandler(async (req, res, next) => {
@@ -16,9 +17,7 @@ const getPageContent = asyncErrorHandler(async (req, res, next) => {
 
 //check user has workspace access
 const createPage = asyncErrorHandler(async (req, res, next) => {
-  return;
-  // req: page
-  // res: created -> page
+  return createNewPage(req.body, req.user);
 });
 
 
@@ -61,10 +60,10 @@ const getAllTasks = asyncErrorHandler(async (req, res, next) => {
 export {
   getPageById,
   getPageContent,
-  createPage,
   updatePageContent,
   updatePageTitle,
   deletePage,
   deletePageByWorkspace,
-  getAllTasks
+  getAllTasks,
+  createPage,
 };

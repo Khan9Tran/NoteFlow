@@ -2,6 +2,7 @@ const createHttpResponse = ({
   statusCode = 200,
   message = "",
   data = null,
+  pagination = null,
   headers = {},
 }) => ({
   statusCode,
@@ -9,15 +10,17 @@ const createHttpResponse = ({
     status: statusCode >= 400 ? "error" : "success",
     message,
     data,
+    pagination,
   },
   headers,
 });
 
-const ok = (data, message = "Success") =>
+const ok = (data, message = "Success", pagination = null) =>
   createHttpResponse({
     statusCode: 200,
     message,
     data,
+    pagination,
   });
 
 const created = (data, message = "Resource created successfully") =>

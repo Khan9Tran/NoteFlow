@@ -1,5 +1,16 @@
 import asyncErrorHandler from "../../../utils/asyncErrorHandler.js";
-import { addWorkspace, getUserById, removeWorkspace, update } from "../../services/users.service.js";
+import {
+  addWorkspace,
+  getUserById,
+  getUsers,
+  getWorkspace,
+  removeWorkspace,
+  update,
+} from "../../services/users.service.js";
+
+const getAllUsers = asyncErrorHandler(async (req, res, next) => {
+  return getUsers(req.query);
+});
 
 const getUserInfo = asyncErrorHandler(async (req, res, next) => {
   return getUserById(req.params.id);
@@ -19,7 +30,7 @@ const removeWorkspaceByUserId = asyncErrorHandler(async (req, res, next) => {
 
 //Lấy thông tin tất cả workspace của một user
 const getWorkspaceAccess = asyncErrorHandler(async (req, res, next) => {
-  return getWorkspaceAccess(req.user);
+  return getWorkspace(req.user);
 });
 
 //Patch user info
@@ -49,4 +60,5 @@ export {
   updateUser,
   updateUserProfilePicture,
   deleteUser,
+  getAllUsers,
 };
