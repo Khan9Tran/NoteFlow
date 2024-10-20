@@ -2,7 +2,7 @@ import _ from "lodash";
 import { WorkspaceNotFoundError } from "../../errors/workspaceError.js";
 import { Page } from "../../models/page.schema.js";
 import { Workspace } from "../../models/workspace.schema.js";
-import { created, forbidden, ok } from "../helpers/http.js";
+import { created, forbidden, noContent, ok } from "../helpers/http.js";
 import { ForbiddenError } from "../../errors/authError.js";
 const createFirstPage = async (workspaceId) => {
   const firstPage = new Page({
@@ -89,8 +89,6 @@ const updateTitle = async (req, res, next) => {
 
   const page = await Page.findOne({ _id: id });
 
-  console.log("payload: " + payload.title);
-
   if (!user.workspaces.includes(page.workspaceId)) {
     next(new ForbiddenError("You are not allowed to access this page"));
   }
@@ -106,10 +104,40 @@ const updateTitle = async (req, res, next) => {
   return ok({ page: _.omit(page.toObject(), ["content"]) });
 };
 
+const deletePageById = async (req, res, next) => {
+  const id = req.params.pageId;
+  const user = req.user;
+
+  const page = await Page.findOne({ _id: id });
+
+  if (!user.workspaces.includes(page.workspaceId)) {
+    next(new ForbiddenError("You are not allowed to access this page"));
+  }
+
+  if (!page) {
+    next(new PageNotFoundError());
+  }
+
+  const workspace = await Workspace.findOne({ _id: page.workspaceId });
+
+  const admin = workspace.members.filter(
+    (member) => member.userId.equals(user._id) && member.role === "admin"
+  );
+
+  if (admin.length === 0) {
+    next(new ForbiddenError("You are not allowed to delete a page"));
+  }
+
+  await Page.deleteOne({ _id: id });
+
+  return noContent();
+};
+
 export {
   createFirstPage,
   createNewPage,
   getById,
   getPageContentById,
   updateTitle,
+  deletePageById,
 };
