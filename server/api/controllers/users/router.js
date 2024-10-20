@@ -8,15 +8,23 @@ import {
   updateUser,
   updateUserProfilePicture,
   removeWorkspaceByUserId,
+  getAllUsers,
 } from "./controller.js";
 import validate from "../../middlewares/validate.js";
 import { userUpdateRequest } from "../../validators/user/updateUserRequest.js";
+import { addWorkspaceByUserIdRequest } from "../../validators/user/addWorkspaceByUserIdRequest.js";
+import adminRoleMiddleware from "../../middlewares/adminRoleMiddleware.js";
 
 export default express
   .Router()
-  .get("/:id", getUserInfo)
-  .get("/:id/workspaces-access", getWorkspaceAccess)
-  .post(":id/workspaces-access", addWorkspaceByUserId)
+  .get("/", adminRoleMiddleware, getAllUsers)
+  .get("/:id", ownershipMiddleware, getUserInfo)
+  .get("/:id/workspaces-access", ownershipMiddleware, getWorkspaceAccess)
+  .post(
+    "/:id/workspaces-access",
+    validate(addWorkspaceByUserIdRequest),
+    addWorkspaceByUserId
+  )
   .patch("/:id", validate(userUpdateRequest), updateUser)
   .patch("/:id/profile-picture", updateUserProfilePicture)
   .delete(
@@ -24,4 +32,4 @@ export default express
     ownershipMiddleware,
     removeWorkspaceByUserId
   )
-  .delete("/:id", deleteUser);
+  .delete("/:id", ownershipMiddleware, deleteUser);
