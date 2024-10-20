@@ -1,18 +1,14 @@
 import asyncErrorHandler from "../../../utils/asyncErrorHandler.js";
-import { createNewPage } from "../../services/pages.service.js";
+import { createNewPage, getById, getPageContentById, updateTitle , deletePageById, deletePageByWorkspaceId} from "../../services/pages.service.js";
 
 //check user has workspace access
 const getPageById = asyncErrorHandler(async (req, res, next) => {
-  return;
-  // req: pageId
-  // res: ok -> page
+  return getById(req, res, next);
 });
 
 //check user has workspace access
 const getPageContent = asyncErrorHandler(async (req, res, next) => {
-  return;
-  // req: pageId
-  // res: ok -> page content
+  return getPageContentById(req, res, next);
 });
 
 //check user has workspace access
@@ -31,23 +27,17 @@ const updatePageContent = asyncErrorHandler(async (req, res, next) => {
 
 //check user has workspace access
 const updatePageTitle = asyncErrorHandler(async (req, res, next) => {
-  return;
-  // req: pageId, title
-  // res: ok -> page
+  return updateTitle(req, res, next);
 });
 
 //check admin or owner of the workspace
 const deletePage = asyncErrorHandler(async (req, res, next) => {
-  return;
-  // req: pageId
-  // res: noContent
+  return deletePageById(req, res, next);
 });
 
 //check admin or owner of the workspace
 const deletePageByWorkspace = asyncErrorHandler(async (req, res, next) => {
-  return;
-  // req: workspaceId
-  // res: noContent
+  return deletePageByWorkspaceId(req, res, next);
 });
 
 //check user has workspace access

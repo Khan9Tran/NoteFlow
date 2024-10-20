@@ -2,7 +2,7 @@ import _ from "lodash";
 import { WorkspaceNotFoundError } from "../../errors/workspaceError.js";
 import { Page } from "../../models/page.schema.js";
 import { Workspace } from "../../models/workspace.schema.js";
-import { created, forbidden } from "../helpers/http.js";
+import { created, forbidden, noContent, ok } from "../helpers/http.js";
 import { ForbiddenError } from "../../errors/authError.js";
 const createFirstPage = async (workspaceId) => {
   const firstPage = new Page({
@@ -46,4 +46,121 @@ const createNewPage = async (payload, user, next) => {
   return created(await newPage.save());
 };
 
-export { createFirstPage, createNewPage };
+const getById = async (req, res, next) => {
+  const id = req.params.pageId;
+  const user = req.user;
+
+  //Không lấy content của page
+  var page = await Page.findOne({ _id: id });
+
+  if (!page) {
+    next(new PageNotFoundError());
+  }
+
+  if (!user.workspaces.includes(page.workspaceId)) {
+    next(new ForbiddenError("You are not allowed to access this page"));
+  }
+
+  page = _.omit(page.toObject(), ["content"]);
+
+  return ok({ page: page });
+};
+
+const getPageContentById = async (req, res, next) => {
+  const id = req.params.pageId;
+  const user = req.user;
+  const page = await Page.findOne({ _id: id });
+
+  if (!page) {
+    next(new PageNotFoundError());
+  }
+
+  if (!user.workspaces.includes(page.workspaceId)) {
+    next(new ForbiddenError("You are not allowed to access this page"));
+  }
+
+  return ok({ content: page.content });
+};
+
+const updateTitle = async (req, res, next) => {
+  const id = req.params.pageId;
+  const payload = req.body;
+  const user = req.user;
+
+  const page = await Page.findOne({ _id: id });
+
+  if (!user.workspaces.includes(page.workspaceId)) {
+    next(new ForbiddenError("You are not allowed to access this page"));
+  }
+
+  if (!page) {
+    next(new PageNotFoundError());
+  }
+
+  page.title = payload.title;
+
+  await page.save();
+
+  return ok({ page: _.omit(page.toObject(), ["content"]) });
+};
+
+const deletePageById = async (req, res, next) => {
+  const id = req.params.pageId;
+  const user = req.user;
+
+  const page = await Page.findOne({ _id: id });
+
+  if (!user.workspaces.includes(page.workspaceId)) {
+    next(new ForbiddenError("You are not allowed to access this page"));
+  }
+
+  if (!page) {
+    next(new PageNotFoundError());
+  }
+
+  const workspace = await Workspace.findOne({ _id: page.workspaceId });
+
+  const admin = workspace.members.filter(
+    (member) => member.userId.equals(user._id) && member.role === "admin"
+  );
+
+  if (admin.length === 0) {
+    next(new ForbiddenError("You are not allowed to delete a page"));
+  }
+
+  await Page.deleteOne({ _id: id });
+
+  return noContent();
+};
+
+const deletePageByWorkspaceId = async (req, res, next) => {
+  const id = req.params.workspaceId;
+  const user = req.user;
+
+  if (!user.workspaces.includes(id)) {
+    next(new ForbiddenError("You are not allowed to access this page"));
+  }
+
+  const workspace = await Workspace.findOne({ _id: id });
+
+  const admin = workspace.members.filter(
+    (member) => member.userId.equals(user._id) && member.role === "admin"
+  );
+
+  if (admin.length === 0) {
+    next(new ForbiddenError("You are not allowed to delete a page"));
+  }
+
+  await Page.deleteMany({ workspaceId: id });
+
+  return noContent();
+};
+export {
+  createFirstPage,
+  createNewPage,
+  getById,
+  getPageContentById,
+  updateTitle,
+  deletePageById,
+  deletePageByWorkspaceId,
+};
