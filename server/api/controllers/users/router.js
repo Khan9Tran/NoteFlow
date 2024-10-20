@@ -29,4 +29,4 @@ export default express
     ownershipMiddleware,
     removeWorkspaceByUserId
   )
-  .delete("/:id", deleteUser);
+  .delete("/:id", ownershipMiddleware, deleteUser);

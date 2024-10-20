@@ -1,5 +1,5 @@
 import asyncErrorHandler from "../../../utils/asyncErrorHandler.js";
-import { getUserById, removeWorkspace, update } from "../../services/users.service.js";
+import { addWorkspace, getUserById, removeWorkspace, update } from "../../services/users.service.js";
 
 const getUserInfo = asyncErrorHandler(async (req, res, next) => {
   return getUserById(req.params.id);

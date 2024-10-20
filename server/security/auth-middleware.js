@@ -7,14 +7,13 @@ const authMiddleware = async (req, res, next) => {
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     next(new UnauthorizedError("Unauthorized, token not provided"));
   }
-
-  const token = authHeader.split(" ")[1];
-
-  if (!token) {
-    next(new UnauthorizedError("Unauthorized, token not provided"));
-  }
-
   try {
+    const token = authHeader.split(" ")[1];
+
+    if (!token) {
+      next(new UnauthorizedError("Unauthorized, token not provided"));
+    }
+
     const decoded = jwt.verify(token, "your_jwt_secret");
     req.user = await introspect(decoded);
     next();
