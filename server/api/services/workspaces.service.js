@@ -75,7 +75,7 @@ const deleteworkspace = async (workspaceId, next) => {
     return;
   }
   await Workspace.deleteOne({ _id: workspaceId });
-  return ok(noContent(), "delete success");
+  return noContent();
 };
 
 const getWbById = async (workspaceId, next) => {
@@ -137,7 +137,7 @@ const removePageFromWb = async (pageId, next) => {
     next(PageNotFoundError());
     return;
   }
-  return ok(noContent(), "delete success");
+  return noContent();
 };
 
 const removeMemberFromWb = async (workspaceId, memberId, next) => {
@@ -152,7 +152,7 @@ const removeMemberFromWb = async (workspaceId, memberId, next) => {
   );
   await workspace.save();
 
-  return ok(noContent(), "delete success");
+  return noContent();
 };
 
 export {

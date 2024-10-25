@@ -1,6 +1,6 @@
 import * as express from "express";
 import {
-    addComment,
+  addComment,
   createTask,
   deleteComment,
   deleteTask,
@@ -9,12 +9,15 @@ import {
   updateTask,
   updateTaskStatus,
 } from "./controller.js";
+import validate from "../../middlewares/validate.js";
+import { createTaskRequest } from "../../validators/task/createTaskRequest.js";
+import { updateTaskRequest } from "../../validators/task/updateTaskRequest.js";
 
 export default express
   .Router()
   .get("/:taskId", getTaskById)
-  .post("/", createTask)
-  .patch("/:taskId", updateTask)
+  .post("/", validate(createTaskRequest), createTask)
+  .patch("/:taskId", validate(updateTaskRequest), updateTask)
   .patch("/:taskId/status", updateTaskStatus)
   .delete("/:taskId", deleteTask)
   .post("/:taskId/comments", addComment)

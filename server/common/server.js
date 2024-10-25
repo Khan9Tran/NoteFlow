@@ -8,6 +8,7 @@ import l from "./logger.js";
 import oas from "./swagger.js";
 import connectDB from "../databases/mongoose.js";
 import routes from "../routes.js";
+import cors from 'cors';
 
 import { fileURLToPath } from "url";
 import { dirname } from "path";
@@ -18,6 +19,13 @@ const __dirname = dirname(__filename);
 
 
 const app = express();
+
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'OPTIONS', 'PATCH', 'DELETE'], 
+  allowedHeaders: ['Content-Type'], 
+}));
+
 const root = path.normalize(`${__dirname}/../..`);
 
 function configureApp() {

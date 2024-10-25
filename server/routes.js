@@ -8,6 +8,6 @@ export default function routes(app) {
   app.use("/api/v1", authRouter);
   app.use("/api/v1/users", authMiddleware, usersRouter);
   app.use("/api/v1/workspaces", authMiddleware, workspacesRouter);
-  app.use("/api/v1/pages",authMiddleware, pagesRouter);
-  app.use("/api/v1/tasks", tasksRouter);
+  app.use("/api/v1/pages", authMiddleware, pagesRouter);
+  app.use("/api/v1/tasks", authMiddleware, tasksRouter);
 }
