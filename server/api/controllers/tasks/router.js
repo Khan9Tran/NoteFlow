@@ -9,11 +9,13 @@ import {
   updateTask,
   updateTaskStatus,
 } from "./controller.js";
+import validate from "../../middlewares/validate.js";
+import { createTaskRequest } from "../../validators/task/createTaskRequest.js";
 
 export default express
   .Router()
   .get("/:taskId", getTaskById)
-  .post("/", createTask)
+  .post("/", validate(createTaskRequest),createTask)
   .patch("/:taskId", updateTask)
   .patch("/:taskId/status", updateTaskStatus)
   .delete("/:taskId", deleteTask)

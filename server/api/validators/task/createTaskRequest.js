@@ -1,6 +1,6 @@
 import Joi from "joi";
 
-export const taskValidationSchema = Joi.object({
+export const createTaskRequest = Joi.object({
   pageId: Joi.string()
     .required()
     .pattern(/^[0-9a-fA-F]{24}$/),

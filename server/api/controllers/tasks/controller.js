@@ -1,12 +1,9 @@
 import asyncErrorHandler from "../../../utils/asyncErrorHandler.js";
 import { createNewTask } from "../../services/tasks.service.js";
+import { getTaskById as fetchTask } from "../../services/tasks.service.js";
 
 const getTaskById = asyncErrorHandler(async (req, res, next) => {
-
-  return;
-
-  // req: taskId
-  // res: ok -> task
+  return fetchTask(req, res, next);
 });
 
 //check admin or owner of the workspace
