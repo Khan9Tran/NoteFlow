@@ -4,6 +4,10 @@ import { getTaskById as fetchTask } from "../../services/tasks.service.js";
 
 const getTaskById = asyncErrorHandler(async (req, res, next) => {
   return fetchTask(req, res, next);
+  return;
+
+  // req: taskId
+  // res: ok -> task
 });
 
 //check admin or owner of the workspace
