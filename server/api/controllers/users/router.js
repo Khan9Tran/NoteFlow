@@ -9,6 +9,7 @@ import {
   updateUserProfilePicture,
   removeWorkspaceByUserId,
   getAllUsers,
+  getUserByToken,
 } from "./controller.js";
 import validate from "../../middlewares/validate.js";
 import { userUpdateRequest } from "../../validators/user/updateUserRequest.js";
@@ -18,6 +19,7 @@ import adminRoleMiddleware from "../../middlewares/adminRoleMiddleware.js";
 export default express
   .Router()
   .get("/", adminRoleMiddleware, getAllUsers)
+  .get("/me", getUserByToken)
   .get("/:id", ownershipMiddleware, getUserInfo)
   .get("/:id/workspaces-access", ownershipMiddleware, getWorkspaceAccess)
   .post(

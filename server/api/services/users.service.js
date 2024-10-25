@@ -143,6 +143,11 @@ const addWorkspace = async (id, payload, user, next) => {
   }
 };
 
+const getUserAuth = async (user, next) => {
+  return ok(user);
+}
+
+
 const getUsers = async (query, next) => {
   const limit = parseInt(query.limit) || 10; // Số lượng kết quả trên mỗi trang
   const page = parseInt(query.page) || 1; // Trang hiện tại
@@ -203,4 +208,5 @@ export {
   getWorkspace,
   addWorkspace,
   getUsers,
+  getUserAuth,
 };

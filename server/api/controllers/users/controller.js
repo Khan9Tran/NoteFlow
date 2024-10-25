@@ -6,6 +6,7 @@ import {
   getWorkspace,
   removeWorkspace,
   update,
+  getUserAuth,
 } from "../../services/users.service.js";
 
 const getAllUsers = asyncErrorHandler(async (req, res, next) => {
@@ -52,6 +53,10 @@ const deleteUser = asyncErrorHandler(async (req, res, next) => {
   //res: noContent
 });
 
+const getUserByToken = asyncErrorHandler(async (req, res, next) => {
+  return getUserAuth(req.user, next);
+});
+
 export {
   getUserInfo,
   addWorkspaceByUserId,
@@ -61,4 +66,5 @@ export {
   updateUserProfilePicture,
   deleteUser,
   getAllUsers,
+  getUserByToken,
 };
