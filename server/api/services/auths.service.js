@@ -12,12 +12,12 @@ const login = async (payload) => {
 
     const user = await User.findOne({ email });
     if (!user) {
-      throw new Error("tai khoan khong ton tai");
+      throw new UnauthorizedError("Email not exist");
     }
 
     const isPasswordValid = await verifyPassword(password, user.password);
     if (!isPasswordValid) {
-      throw new Error("mat khau khong dung");
+      throw new UnauthorizedError("Password is incorrect");
     }
 
     const token = jwt.sign(
@@ -26,18 +26,16 @@ const login = async (payload) => {
       { expiresIn: "1h" }
     );
 
-    const userWithoutPassword = _.omit(user.toObject(), ["password"]);
-    return ok({ token: token }, "login success");
+    return ok({ token: token }, "Login success");
   } catch (error) {
     logger.error(error);
-    throw error;
+    throw new UnauthorizedError(error.message);
   }
 };
 
 const introspect = async (decoded) => {
   try {
     const currentTime = Math.floor(Date.now() / 1000);
-    console.log(currentTime);
     if (decoded.exp && decoded.exp < currentTime) {
       throw new UnauthorizedError("Token has expired");
     }
@@ -50,7 +48,7 @@ const introspect = async (decoded) => {
 
     return user;
   } catch (error) {
-    // throw new Error("error");
+    throw new UnauthorizedError(error.message);
   }
 };
 
