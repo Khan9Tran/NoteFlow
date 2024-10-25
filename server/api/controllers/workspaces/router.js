@@ -19,7 +19,6 @@ export default express
   .Router()
   .get("/:workspaceId/members", getAllMemberByWorkSpace)
   .get("/:workspaceId/pages/root", getAllRootPages)
-  .get("/:workspaceId/pages/:pageId/childrens", getChildrenPageByPageRefecence)
   .get("/:workspaceId", getWorkspaceById)
   .post("/", validate(createWorkspaceRequest), createWorkspace)
   .post("/:workspaceId/members", addMemberToWorkspace)

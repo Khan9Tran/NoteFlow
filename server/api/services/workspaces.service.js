@@ -1,5 +1,3 @@
-import mongoose from "mongoose";
-import { UnauthorizedError } from "../../errors/authError.js";
 import { Workspace } from "../../models/workspace.schema.js";
 import { Page } from "../../models/page.schema.js";
 import { created, noContent, ok } from "../helpers/http.js";
@@ -27,23 +25,26 @@ const create = async (payload, user) => {
   return created(result._id);
 };
 
-const addMember = async (payload, workspaceId) => {
+const addMember = async (payload, workspaceId, next) => {
   const user = await User.findOne({ _id: payload._id });
 
   if (!user) {
-    throw new UserNotFoundError();
+    next(new UserNotFoundError());
+    return;
   }
 
   const workspace = await Workspace.findById(workspaceId);
   if (!workspace) {
-    throw new WorkspaceNotFoundError();
+    next(new WorkspaceNotFoundError());
+    return;
   }
 
   const memberExists = workspace.members.some((member) =>
     member.userId.equals(user._id)
   );
   if (memberExists) {
-    throw new UserIsExistError();
+    next(new UserIsExistError());
+    return;
   }
 
   workspace.members.push({ userId: user._id, role: "member" });
@@ -55,49 +56,54 @@ const addMember = async (payload, workspaceId) => {
   });
 };
 
-const getallMembers = async (workspaceId) => {
+const getallMembers = async (workspaceId, next) => {
   const workspace = await Workspace.findById(workspaceId).populate(
     "members.userId",
     "name email"
   );
   if (!workspace) {
-    throw new WorkspaceNotFoundError();
+    next(WorkspaceNotFoundError());
+    return;
   }
   return ok(workspace.members);
 };
 
-const deleteworkspace = async (workspaceId) => {
+const deleteworkspace = async (workspaceId, next) => {
   const workspace = await Workspace.findById(workspaceId);
   if (!workspace) {
-    throw new WorkspaceNotFoundError();
+    next(WorkspaceNotFoundError());
+    return;
   }
   await Workspace.deleteOne({ _id: workspaceId });
   return ok(noContent(), "delete success");
 };
 
-const getWbById = async (workspaceId) => {
+const getWbById = async (workspaceId, next) => {
   const workspace = await Workspace.findById(workspaceId);
   if (!workspace) {
-    throw new WorkspaceNotFoundError();
+    next(WorkspaceNotFoundError());
+    return;
   }
   return ok(workspace);
 };
 
-const getRootPages = async (workspaceId) => {
+const getRootPages = async (workspaceId, next) => {
   const workspace = await Workspace.findById(workspaceId).populate(
     "pages",
     "title"
   );
   if (!workspace) {
-    throw new WorkspaceNotFoundError();
+    next(WorkspaceNotFoundError());
+    return;
   }
   return ok(workspace.pages);
 };
 
-const addPagetoWb = async (payload, workspaceId) => {
+const addPagetoWb = async (payload, workspaceId, next) => {
   const workspace = await Workspace.findById(workspaceId);
   if (!workspace) {
-    throw new WorkspaceNotFoundError();
+    next(WorkspaceNotFoundError());
+    return;
   }
   const newPage = new Page({
     title: payload.title,
@@ -112,30 +118,33 @@ const addPagetoWb = async (payload, workspaceId) => {
   return created(newPage._id);
 };
 
-const updateWorkspace = async (workspaceId, updateFields) => {
+const updateWorkspace = async (workspaceId, updateFields, next) => {
   const workspace = await Workspace.findByIdAndUpdate(
     workspaceId,
     updateFields,
     { new: true }
   );
   if (!workspace) {
-    throw new WorkspaceNotFoundError();
+    next(WorkspaceNotFoundError());
+    return;
   }
   return ok(workspace);
 };
 
-const removePageFromWb = async (pageId) => {
+const removePageFromWb = async (pageId, next) => {
   const page = await Page.findByIdAndDelete(pageId);
   if (!page) {
-    throw new PageNotFoundError();
+    next(PageNotFoundError());
+    return;
   }
   return ok(noContent(), "delete success");
 };
 
-const removeMemberFromWb = async (workspaceId, memberId) => {
+const removeMemberFromWb = async (workspaceId, memberId, next) => {
   const workspace = await Workspace.findById(workspaceId);
   if (!workspace) {
-    throw new WorkspaceNotFoundError();
+    next(WorkspaceNotFoundError());
+    return;
   }
 
   workspace.members = workspace.members.filter(
