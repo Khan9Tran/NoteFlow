@@ -22,7 +22,7 @@ const create = async (payload, user) => {
   });
 
   const result = await newWorkspace.save();
-  return created(result._id);
+  return created({ _id: result._id });
 };
 
 const addMember = async (payload, workspaceId, next) => {
