@@ -1,1 +1,1 @@
-import {Task} from '../../models/task.schema';
+import { Task } from "../../models/task.schema";
