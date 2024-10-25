@@ -6,7 +6,6 @@ import {
   deleteWorkspace,
   getAllMemberByWorkSpace,
   getAllRootPages,
-  getChildrenPageByPageRefecence,
   getWorkspaceById,
   removeMemberFromWorkspace,
   removePageFromWorkspace,

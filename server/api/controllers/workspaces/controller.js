@@ -1,5 +1,5 @@
 import asyncErrorHandler from "../../../utils/asyncErrorHandler.js";
-import { ok } from "../../helpers/http.js";
+
 import {
   addMember,
   create,
@@ -49,10 +49,6 @@ const getAllRootPages = asyncErrorHandler(async (req, res, next) => {
   //response: ok -> list root pages
 });
 
-const getChildrenPageByPageRefecence = asyncErrorHandler(
-  async (req, res, next) => {}
-);
-
 //Them 1 page vao workspace
 const addPageToWorkspace = asyncErrorHandler(async (req, res, next) => {
   return addPagetoWb(req.body, req.params.workspaceId, next);
@@ -86,7 +82,6 @@ export {
   deleteWorkspace,
   getWorkspaceById,
   getAllRootPages,
-  getChildrenPageByPageRefecence,
   addPageToWorkspace,
   updateWorkspace,
   removePageFromWorkspace,
