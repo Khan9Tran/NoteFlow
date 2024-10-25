@@ -144,9 +144,9 @@ const addWorkspace = async (id, payload, user, next) => {
 };
 
 const getUserAuth = async (user, next) => {
-  return ok(user);
-}
-
+  const userWithoutPassword = _.omit(user.toObject(), ["password"]);
+  return ok(userWithoutPassword);
+};
 
 const getUsers = async (query, next) => {
   const limit = parseInt(query.limit) || 10; // Số lượng kết quả trên mỗi trang
