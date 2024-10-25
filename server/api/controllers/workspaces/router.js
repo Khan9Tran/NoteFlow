@@ -6,7 +6,7 @@ import {
   deleteWorkspace,
   getAllMemberByWorkSpace,
   getAllRootPages,
-  getChildrenPageByPageRefecence,
+  updateUserRole,
   getWorkspaceById,
   removeMemberFromWorkspace,
   removePageFromWorkspace,
@@ -22,6 +22,7 @@ export default express
   .get("/:workspaceId", getWorkspaceById)
   .post("/", validate(createWorkspaceRequest), createWorkspace)
   .post("/:workspaceId/members", addMemberToWorkspace)
+  .post("/:workspaceId/members/:memberId", updateUserRole)
   .post("/:workspaceId/pages", addPageToWorkspace)
   .patch("/:workspaceId", updateWorkspace)
   .delete("/:workspaceId/members/:memberId", removeMemberFromWorkspace)

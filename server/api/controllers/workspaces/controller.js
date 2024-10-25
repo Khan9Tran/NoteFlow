@@ -1,5 +1,4 @@
 import asyncErrorHandler from "../../../utils/asyncErrorHandler.js";
-import { ok } from "../../helpers/http.js";
 import {
   addMember,
   create,
@@ -10,6 +9,7 @@ import {
   addPagetoWb,
   removePageFromWb,
   removeMemberFromWb,
+  updateUserAccess,
 } from "../../services/workspaces.service.js";
 
 const createWorkspace = asyncErrorHandler(async (req, res, next) => {
@@ -49,9 +49,6 @@ const getAllRootPages = asyncErrorHandler(async (req, res, next) => {
   //response: ok -> list root pages
 });
 
-const getChildrenPageByPageRefecence = asyncErrorHandler(
-  async (req, res, next) => {}
-);
 
 //Them 1 page vao workspace
 const addPageToWorkspace = asyncErrorHandler(async (req, res, next) => {
@@ -79,6 +76,10 @@ const removeMemberFromWorkspace = asyncErrorHandler(async (req, res, next) => {
   //response: noContent
 });
 
+const updateUserRole = asyncErrorHandler(async (req, res, next) => {
+  return updateUserAccess(req, res, next);
+});
+
 export {
   createWorkspace,
   addMemberToWorkspace,
@@ -86,9 +87,9 @@ export {
   deleteWorkspace,
   getWorkspaceById,
   getAllRootPages,
-  getChildrenPageByPageRefecence,
   addPageToWorkspace,
   updateWorkspace,
+  updateUserRole,
   removePageFromWorkspace,
   removeMemberFromWorkspace,
 };
