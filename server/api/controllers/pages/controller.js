@@ -1,5 +1,14 @@
 import asyncErrorHandler from "../../../utils/asyncErrorHandler.js";
-import { createNewPage, getById, getPageContentById, updateTitle , deletePageById, deletePageByWorkspaceId} from "../../services/pages.service.js";
+import {
+  createNewPage,
+  getById,
+  getPageContentById,
+  updateTitle,
+  deletePageById,
+  deletePageByWorkspaceId,
+  updatePageContentById,
+  getAllTasksByPageId,
+} from "../../services/pages.service.js";
 
 //check user has workspace access
 const getPageById = asyncErrorHandler(async (req, res, next) => {
@@ -16,14 +25,10 @@ const createPage = asyncErrorHandler(async (req, res, next) => {
   return createNewPage(req.body, req.user, next);
 });
 
-
 //check user has workspace access
 const updatePageContent = asyncErrorHandler(async (req, res, next) => {
-  return;
-  // req: pageId, content
-  // res: ok -> page
+  return updatePageContentById(req, res, next);
 });
-
 
 //check user has workspace access
 const updatePageTitle = asyncErrorHandler(async (req, res, next) => {
@@ -42,9 +47,7 @@ const deletePageByWorkspace = asyncErrorHandler(async (req, res, next) => {
 
 //check user has workspace access
 const getAllTasks = asyncErrorHandler(async (req, res, next) => {
-  return;
-  // req: pageId
-  // res: ok -> tasks
+  return getAllTasksByPageId(req, res, next);
 });
 
 export {
