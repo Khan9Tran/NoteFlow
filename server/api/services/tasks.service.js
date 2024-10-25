@@ -47,7 +47,23 @@ export const createNewTask = async (req, res, next) => {
 export const getTaskById = async (req, res, next) => {
   const id = req.params.taskId;
 
-  const task = await Task.findById(id);
+  const task = await validateTaskAccess(await Task.findById(id), req, next);
+
+  return ok(task);
+};
+
+export const updateTaskById = async (req, res, next) => {
+  const task = await validateTaskAccess(
+    await Task.findById(req.params.taskId),
+    req,
+    next
+  );
+
+  Object.assign(task, req.body);
+  return ok(await task.save());
+};
+
+const validateTaskAccess = async (task, req, next) => {
   if (!task) {
     return next(TaskNotFoundError());
   }
@@ -66,5 +82,5 @@ export const getTaskById = async (req, res, next) => {
     return next(ForbiddenError("You are not allowed to access this task"));
   }
 
-  return ok(task);
+  return task;
 };
