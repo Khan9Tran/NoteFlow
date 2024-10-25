@@ -18,7 +18,7 @@ import { createWorkspaceRequest } from "../../validators/workspace/createWorkspa
 export default express
   .Router()
   .get("/:workspaceId/members", getAllMemberByWorkSpace)
-  .get("/:workspaceId/pages/root", getAllRootPages)
+  .get("/:workspaceId/pages", getAllRootPages)
   .get("/:workspaceId", getWorkspaceById)
   .post("/", validate(createWorkspaceRequest), createWorkspace)
   .post("/:workspaceId/members", addMemberToWorkspace)
