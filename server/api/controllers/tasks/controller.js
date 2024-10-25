@@ -1,4 +1,5 @@
 import asyncErrorHandler from "../../../utils/asyncErrorHandler.js";
+import { createNewTask } from "../../services/tasks.service.js";
 
 const getTaskById = asyncErrorHandler(async (req, res, next) => {
 
@@ -10,9 +11,7 @@ const getTaskById = asyncErrorHandler(async (req, res, next) => {
 
 //check admin or owner of the workspace
 const createTask = asyncErrorHandler(async (req, res, next) => {
-  return;
-  // req: task
-  // res: created -> task
+  return createNewTask(req, res, next);
 });
 
 //check admin or owner of the workspace
