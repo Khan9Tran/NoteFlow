@@ -5,7 +5,8 @@ import {
   createWorkspace,
   deleteWorkspace,
   getAllMemberByWorkSpace,
-  getAllRootPages,
+  getAllPages,
+  updateUserRole,
   getWorkspaceById,
   removeMemberFromWorkspace,
   removePageFromWorkspace,
@@ -17,10 +18,11 @@ import { createWorkspaceRequest } from "../../validators/workspace/createWorkspa
 export default express
   .Router()
   .get("/:workspaceId/members", getAllMemberByWorkSpace)
-  .get("/:workspaceId/pages", getAllRootPages)
+  .get("/:workspaceId/pages", getAllPages)
   .get("/:workspaceId", getWorkspaceById)
   .post("/", validate(createWorkspaceRequest), createWorkspace)
   .post("/:workspaceId/members", addMemberToWorkspace)
+  .post("/:workspaceId/members/:memberId", updateUserRole)
   .post("/:workspaceId/pages", addPageToWorkspace)
   .patch("/:workspaceId", updateWorkspace)
   .delete("/:workspaceId/members/:memberId", removeMemberFromWorkspace)

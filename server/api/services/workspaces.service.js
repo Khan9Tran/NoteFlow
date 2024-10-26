@@ -5,6 +5,7 @@ import { User } from "../../models/user.schema.js";
 import { WorkspaceNotFoundError } from "../../errors/workspaceError.js";
 import { UserIsExistError, UserNotFoundError } from "../../errors/userError.js";
 import { PageNotFoundError } from "../../errors/pageError.js";
+import { ForbiddenError } from "../../errors/authError.js";
 const createFirstWorkspace = async (userId, userName) => {
   const newWorkspace = new Workspace({
     name: `${userName}'s Workspace`,
@@ -22,7 +23,7 @@ const create = async (payload, user) => {
   });
 
   const result = await newWorkspace.save();
-  return created(result._id);
+  return created({ _id: result._id });
 };
 
 const addMember = async (payload, workspaceId, next) => {
@@ -62,7 +63,7 @@ const getallMembers = async (workspaceId, next) => {
     "name email"
   );
   if (!workspace) {
-    next(WorkspaceNotFoundError());
+    next(new WorkspaceNotFoundError());
     return;
   }
   return ok(workspace.members);
@@ -71,7 +72,7 @@ const getallMembers = async (workspaceId, next) => {
 const deleteworkspace = async (workspaceId, next) => {
   const workspace = await Workspace.findById(workspaceId);
   if (!workspace) {
-    next(WorkspaceNotFoundError());
+    next(new WorkspaceNotFoundError());
     return;
   }
   await Workspace.deleteOne({ _id: workspaceId });
@@ -81,19 +82,19 @@ const deleteworkspace = async (workspaceId, next) => {
 const getWbById = async (workspaceId, next) => {
   const workspace = await Workspace.findById(workspaceId);
   if (!workspace) {
-    next(WorkspaceNotFoundError());
+    next(new WorkspaceNotFoundError());
     return;
   }
   return ok(workspace);
 };
 
-const getRootPages = async (workspaceId, next) => {
+const getPages = async (workspaceId, next) => {
   const workspace = await Workspace.findById(workspaceId).populate(
     "pages",
     "title"
   );
   if (!workspace) {
-    next(WorkspaceNotFoundError());
+    next(new WorkspaceNotFoundError());
     return;
   }
   return ok(workspace.pages);
@@ -102,7 +103,7 @@ const getRootPages = async (workspaceId, next) => {
 const addPagetoWb = async (payload, workspaceId, next) => {
   const workspace = await Workspace.findById(workspaceId);
   if (!workspace) {
-    next(WorkspaceNotFoundError());
+    next(new WorkspaceNotFoundError());
     return;
   }
   const newPage = new Page({
@@ -125,7 +126,7 @@ const updateWorkspace = async (workspaceId, updateFields, next) => {
     { new: true }
   );
   if (!workspace) {
-    next(WorkspaceNotFoundError());
+    next(new WorkspaceNotFoundError());
     return;
   }
   return ok(workspace);
@@ -134,7 +135,7 @@ const updateWorkspace = async (workspaceId, updateFields, next) => {
 const removePageFromWb = async (pageId, next) => {
   const page = await Page.findByIdAndDelete(pageId);
   if (!page) {
-    next(PageNotFoundError());
+    next(new PageNotFoundError());
     return;
   }
   return noContent();
@@ -143,7 +144,7 @@ const removePageFromWb = async (pageId, next) => {
 const removeMemberFromWb = async (workspaceId, memberId, next) => {
   const workspace = await Workspace.findById(workspaceId);
   if (!workspace) {
-    next(WorkspaceNotFoundError());
+    next(new WorkspaceNotFoundError());
     return;
   }
 
@@ -155,6 +156,49 @@ const removeMemberFromWb = async (workspaceId, memberId, next) => {
   return noContent();
 };
 
+const updateUserAccess = async (req, res, next) => {
+  const workspace = await Workspace.findById(req.params.workspaceId);
+
+  if (!workspace) {
+    next(new WorkspaceNotFoundError());
+    return;
+  }
+
+  const member = workspace.members.find(
+    (member) => member.userId.toString() === req.params.memberId
+  );
+
+  const admin = workspace.members.find(
+    (member) =>
+      member.userId.toString() === req.user._id.toString() &&
+      member.role === "admin"
+  );
+
+  if (!admin) {
+    return next(new ForbiddenError("You are not allowed to update user role"));
+  }
+
+  if (!member) {
+    next(new UserNotFoundError());
+    return;
+  }
+
+  const role = req.body.role;
+  if (role === null || role === undefined) {
+    return next(new ForbiddenError(""));
+  }
+
+  if (role !== "admin" && role !== "member") {
+    return next(new ForbiddenError(""));
+  }
+
+  member.role = role;
+
+  await workspace.save();
+
+  return ok(member);
+};
+
 export {
   createFirstWorkspace,
   create,
@@ -162,8 +206,9 @@ export {
   getallMembers,
   deleteworkspace,
   getWbById,
-  getRootPages,
+  getPages,
   addPagetoWb,
   removePageFromWb,
+  updateUserAccess,
   removeMemberFromWb,
 };

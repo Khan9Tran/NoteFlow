@@ -200,6 +200,29 @@ const getUsers = async (query, next) => {
   });
 };
 
+const updateUserProfilePicture = async (req, res, next) => {
+  try {
+    if (req.params.id !== req.user._id.toString()) {
+      return next(
+        new UnauthorizedError("You are not allowed to update this user")
+      );
+    }
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return next(new UserNotFoundError());
+    }
+    user.profilePicture = new String(req.body.profilePicture);
+
+    await user.save();
+
+    return ok(user);
+  } catch (error) {
+    logger.error(error);
+    return serverError();
+  }
+};
+
 export {
   create,
   getUserById,
@@ -209,4 +232,5 @@ export {
   addWorkspace,
   getUsers,
   getUserAuth,
+  updateUserProfilePicture,
 };

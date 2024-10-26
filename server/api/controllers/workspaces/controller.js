@@ -1,15 +1,15 @@
 import asyncErrorHandler from "../../../utils/asyncErrorHandler.js";
-
 import {
   addMember,
   create,
   getallMembers,
   deleteworkspace,
   getWbById,
-  getRootPages,
+  getPages,
   addPagetoWb,
   removePageFromWb,
   removeMemberFromWb,
+  updateUserAccess,
 } from "../../services/workspaces.service.js";
 
 const createWorkspace = asyncErrorHandler(async (req, res, next) => {
@@ -43,11 +43,12 @@ const getWorkspaceById = asyncErrorHandler(async (req, res, next) => {
 });
 
 //All page cha từ workspace
-const getAllRootPages = asyncErrorHandler(async (req, res, next) => {
-  return getRootPages(req.params.workspaceId, next);
+const getAllPages = asyncErrorHandler(async (req, res, next) => {
+  return getPages(req.params.workspaceId, next);
   // request: workspace id từ req
   //response: ok -> list root pages
 });
+
 
 //Them 1 page vao workspace
 const addPageToWorkspace = asyncErrorHandler(async (req, res, next) => {
@@ -75,15 +76,20 @@ const removeMemberFromWorkspace = asyncErrorHandler(async (req, res, next) => {
   //response: noContent
 });
 
+const updateUserRole = asyncErrorHandler(async (req, res, next) => {
+  return updateUserAccess(req, res, next);
+});
+
 export {
   createWorkspace,
   addMemberToWorkspace,
   getAllMemberByWorkSpace,
   deleteWorkspace,
   getWorkspaceById,
-  getAllRootPages,
+  getAllPages,
   addPageToWorkspace,
   updateWorkspace,
+  updateUserRole,
   removePageFromWorkspace,
   removeMemberFromWorkspace,
 };

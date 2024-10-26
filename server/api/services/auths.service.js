@@ -21,7 +21,7 @@ const login = async (payload) => {
     }
 
     const token = jwt.sign(
-      { sub: user.email, iss: "localhost:3000", scope: user.role },
+      { sub: user.email, iss: "localhost:3000", scope: user.role, id: user._id },
       "your_jwt_secret",
       { expiresIn: "1h" }
     );
