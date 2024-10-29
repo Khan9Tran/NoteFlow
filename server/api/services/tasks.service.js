@@ -189,13 +189,7 @@ export const updateCommentById = async (taskId, commentId, req, next) => {
   comment.text = newCommentText;
   await comment.save();
 
-  const taskComment = task.comments.find((c) => c._id.toString() === commentId);
-  if (taskComment) {
-    taskComment.text = newCommentText;
-    await task.save();
-  }
-
-  return ok(req, comment);
+  return ok(await task.save());
 };
 
 export const deleteCommentById = async (taskId, commentId, req, next) => {
@@ -208,18 +202,17 @@ export const deleteCommentById = async (taskId, commentId, req, next) => {
   if (!page) {
     return next(new PageNotFoundError("Page not found"));
   }
-  // Lấy Workspace từ page.workspaceId
+
   const workspace = await Workspace.findById(page.workspaceId);
   if (!workspace) {
     return next(new WorkspaceNotFoundError("Workspace not found"));
   }
 
-  // Kiểm tra quyền truy cập vào Workspace
   const userInWorkspace = workspace.members.find(
     (member) => member.userId.toString() === req.user._id.toString()
   );
   console.log(userInWorkspace);
-  // Kiểm tra nếu người dùng là admin hoặc owner của workspace
+
   if (
     !userInWorkspace ||
     (userInWorkspace.role !== "admin" &&
@@ -230,7 +223,6 @@ export const deleteCommentById = async (taskId, commentId, req, next) => {
     );
   }
 
-  // Kiểm tra sự tồn tại của Comment
   const comment = await Comment.findById(commentId);
   if (!comment || comment.taskId.toString() !== taskId) {
     return next(

@@ -21,9 +21,14 @@ const login = async (payload) => {
     }
 
     const token = jwt.sign(
-      { sub: user.email, iss: "localhost:3000", scope: user.role, id: user._id },
-      "your_jwt_secret",
-      { expiresIn: "1h" }
+      {
+        sub: user.email,
+        iss: process.env.ISSUER,
+        scope: user.role,
+        id: user._id,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN }
     );
 
     return ok({ token: token }, "Login success");

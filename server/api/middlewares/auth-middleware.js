@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
-import { UnauthorizedError } from "../errors/authError.js";
-import { introspect } from "../api/services/auths.service.js";
+import { UnauthorizedError } from "../../errors/authError.js";
+import { introspect } from "../services/auths.service.js";
 
 const authMiddleware = async (req, res, next) => {
   var authHeader = req.headers.authorization;
