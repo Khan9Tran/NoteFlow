@@ -3,7 +3,7 @@ import workspacesRouter from "./api/controllers/workspaces/router.js";
 import pagesRouter from "./api/controllers/pages/router.js";
 import tasksRouter from "./api/controllers/tasks/router.js";
 import authRouter from "./api/controllers/auth/router.js";
-import authMiddleware from "./api/middlewares/auth-middleware.js";
+import authMiddleware from "./api/middlewares/authMiddleware.js";
 export default function routes(app) {
   app.use("/api/v1", authRouter);
   app.use("/api/v1/users", authMiddleware, usersRouter);

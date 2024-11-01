@@ -4,6 +4,7 @@ import { introspect } from "../services/auths.service.js";
 
 const authMiddleware = async (req, res, next) => {
   var authHeader = req.headers.authorization;
+
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     next(new UnauthorizedError("Unauthorized, token not provided"));
   }
@@ -14,7 +15,7 @@ const authMiddleware = async (req, res, next) => {
       next(new UnauthorizedError("Unauthorized, token not provided"));
     }
 
-    const decoded = jwt.verify(token, "your_jwt_secret");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = await introspect(decoded);
     next();
   } catch (error) {

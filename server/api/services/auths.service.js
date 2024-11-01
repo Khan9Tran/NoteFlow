@@ -42,18 +42,18 @@ const introspect = async (decoded) => {
   try {
     const currentTime = Math.floor(Date.now() / 1000);
     if (decoded.exp && decoded.exp < currentTime) {
-      throw new UnauthorizedError("Token has expired");
+      next(new UnauthorizedError("Token has expired"));
     }
 
     const user = await User.findOne({ email: decoded.sub });
 
     if (!user) {
-      throw new UnauthorizedError();
+      next(new UnauthorizedError());
     }
 
     return user;
   } catch (error) {
-    throw new UnauthorizedError(error.message);
+    next(new UnauthorizedError(error.message));
   }
 };
 
