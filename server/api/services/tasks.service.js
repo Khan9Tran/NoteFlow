@@ -149,6 +149,7 @@ export const addCommentToTask = async (taskId, req, next) => {
 };
 
 export const updateCommentById = async (taskId, commentId, req, next) => {
+  const task = await Task.findById(taskId);
   if (!task) {
     return next(new TaskNotFoundError("Task not found"));
   }
@@ -186,7 +187,7 @@ export const updateCommentById = async (taskId, commentId, req, next) => {
     );
   }
 
-  comment.text = newCommentText;
+  comment.text = req.body.text;
   await comment.save();
 
   return ok(await task.save());

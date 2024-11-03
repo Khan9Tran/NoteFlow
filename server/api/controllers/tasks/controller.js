@@ -5,13 +5,13 @@ import {
   updateTaskStatusById,
   deleteTaskById,
   addCommentToTask,
+  updateCommentById,
   deleteCommentById,
 } from "../../services/tasks.service.js";
 import { getTaskById as fetchTask } from "../../services/tasks.service.js";
 
 const getTaskById = asyncErrorHandler(async (req, res, next) => {
   return fetchTask(req, res, next);
-  return;
 
   // req: taskId
   // res: ok -> task
@@ -50,7 +50,7 @@ const addComment = asyncErrorHandler(async (req, res, next) => {
 
 //check has workspace access
 const updateComment = asyncErrorHandler(async (req, res, next) => {
-  return;
+  return updateCommentById(req.params.taskId, req.params.commentId, req, next);
   // req: taskId, commentId, comment
   // res: ok -> comment
 });
