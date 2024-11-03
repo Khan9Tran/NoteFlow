@@ -109,7 +109,7 @@ export const updateTaskStatusById = async (taskId, req, next) => {
 };
 
 export const addCommentToTask = async (taskId, req, next) => {
-  const comment = req.body.comment;
+  const comment = req.body.text;
 
   const task = await Task.findById(taskId);
   if (!task) {
