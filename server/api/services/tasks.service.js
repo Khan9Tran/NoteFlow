@@ -43,7 +43,7 @@ export const createNewTask = async (req, res, next) => {
   });
 
   await task.save();
-  page.content.push({taskId: task._id, type: "task"});
+  page.content.push({ taskId: task._id, type: "task" });
   await page.save();
   return created(task);
 };
@@ -167,7 +167,6 @@ export const updateCommentById = async (taskId, commentId, req, next) => {
     return next(new WorkspaceNotFoundError("Workspace not found"));
   }
 
-  // Kiểm tra quyền truy cập vào Workspace
   const userInWorkspace = workspace.members.find(
     (member) => member.userId.toString() === req.user._id.toString()
   );
@@ -177,12 +176,17 @@ export const updateCommentById = async (taskId, commentId, req, next) => {
     );
   }
 
-  const comment = await Comment.findById(commentId);
-  if (!comment || comment.taskId.toString() !== taskId) {
+  const commentIndex = task.comments.findIndex(
+    (comment) => comment._id.toString() === commentId
+  );
+
+  if (commentIndex === -1) {
     return next(
       new ForbiddenError("Comment not found or does not belong to this task")
     );
   }
+
+  const comment = task.comments[commentIndex];
 
   if (comment.userId.toString() !== req.user._id.toString()) {
     return next(
@@ -190,10 +194,12 @@ export const updateCommentById = async (taskId, commentId, req, next) => {
     );
   }
 
-  comment.text = req.body.text;
-  await comment.save();
+  task.comments[commentIndex].text = req.body.text;
+  task.updatedAt = Date.now();
 
-  return ok(await task.save());
+  await task.save();
+
+  return ok(task);
 };
 
 export const deleteCommentById = async (taskId, commentId, req, next) => {
