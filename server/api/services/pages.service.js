@@ -219,32 +219,59 @@ const getAllTasksByPageId = async (req, res, next) => {
   const id = req.params.pageId;
   const user = req.user;
 
-  const page = await Page.findOne({ _id: id });
+  // Lấy tham số phân trang từ query
+  const limit = parseInt(req.query.limit) || 10; // Số lượng task trên mỗi trang
+  const page = parseInt(req.query.page) || 1; // Trang hiện tại
+  const skip = (page - 1) * limit; // Tính số lượng task cần bỏ qua
 
-  if (!page) {
+  const pageDoc = await Page.findOne({ _id: id });
+
+  if (!pageDoc) {
     next(new PageNotFoundError());
     return;
   }
 
-  if (!user.workspaces.includes(page.workspaceId)) {
+  if (!user.workspaces.includes(pageDoc.workspaceId)) {
     next(new ForbiddenError("You are not allowed to access this page"));
     return;
   }
 
-  const content = page.content;
+  const content = pageDoc.content;
 
   if (content.length === 0) {
-    return ok({ tasks: [] });
+    return ok({ tasks: [], totalPages: 0, total: 0 });
   }
 
   const tasks = content.filter((item) => item.type === "task");
 
-  const tasksDetails = tasks.map((task) => {
-    return Task.findOne({ _id: task.taskId });
-  });
+  const totalTasks = tasks.length;
 
-  return ok({ tasks: tasksDetails });
+  const totalPages = Math.ceil(totalTasks / limit);
+
+  const paginatedTasks = tasks.slice(skip, skip + limit);
+
+  const tasksDetails = await Promise.all(
+    paginatedTasks.map((task) => Task.findOne({ _id: task.taskId }))
+  );
+
+  const hasPrevPage = page > 1;
+  const hasNextPage = page < totalPages;
+
+  const prevPage = hasPrevPage ? page - 1 : null;
+  const nextPage = hasNextPage ? page + 1 : null;
+
+  return ok(tasksDetails, "Get tasks", {
+    page,
+    limit,
+    total: totalTasks,
+    totalPages,
+    hasPrevPage,
+    hasNextPage,
+    prevPage,
+    nextPage,
+  });
 };
+
 export {
   createFirstPage,
   createNewPage,
