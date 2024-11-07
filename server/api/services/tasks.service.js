@@ -42,7 +42,10 @@ export const createNewTask = async (req, res, next) => {
     }
   });
 
-  return created(await task.save());
+  await task.save();
+  page.content.push({taskId: task._id, type: "task"});
+  await page.save();
+  return created(task);
 };
 
 export const getTaskById = async (req, res, next) => {
