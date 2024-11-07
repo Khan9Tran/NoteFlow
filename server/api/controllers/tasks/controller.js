@@ -7,11 +7,19 @@ import {
   addCommentToTask,
   updateCommentById,
   deleteCommentById,
+  getCommentsByTaskId,
 } from "../../services/tasks.service.js";
 import { getTaskById as fetchTask } from "../../services/tasks.service.js";
 
 const getTaskById = asyncErrorHandler(async (req, res, next) => {
   return fetchTask(req, res, next);
+
+  // req: taskId
+  // res: ok -> task
+});
+
+const getTaskComments = asyncErrorHandler(async (req, res, next) => {
+  return getCommentsByTaskId(req, req.params.taskId, next);
 
   // req: taskId
   // res: ok -> task
@@ -64,6 +72,7 @@ const deleteComment = asyncErrorHandler(async (req, res, next) => {
 
 export {
   getTaskById,
+  getTaskComments,
   createTask,
   updateTask,
   deleteTask,
