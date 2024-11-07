@@ -246,16 +246,16 @@ const validateTaskAccess = async (task, req, next) => {
 
   const page = await Page.findById(task.pageId);
   if (!page) {
-    return next(ForbiddenError("You are not allowed to access this task"));
+    return next(new ForbiddenError("You are not allowed to access this task"));
   }
 
   const workspace = await Workspace.findById(page.workspaceId);
   if (!workspace) {
-    return next(ForbiddenError("You are not allowed to access this task"));
+    return next(new ForbiddenError("You are not allowed to access this task"));
   }
 
   if (!req.user.workspaces.includes(workspace._id)) {
-    return next(ForbiddenError("You are not allowed to access this task"));
+    return next(new ForbiddenError("You are not allowed to access this task"));
   }
 
   return task;
