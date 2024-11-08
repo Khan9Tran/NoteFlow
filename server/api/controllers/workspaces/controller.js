@@ -4,7 +4,6 @@ import {
   create,
   deleteworkspace,
   getWbById,
-  getPages,
   addPagetoWb,
   removePageFromWb,
   removeMemberFromWb,
@@ -40,12 +39,6 @@ const getWorkspaceById = asyncErrorHandler(async (req, res, next) => {
   //response: ok -> workspace
 });
 
-//All page cha từ workspace
-const getAllPages = asyncErrorHandler(async (req, res, next) => {
-  return getPages(req.params.workspaceId, next);
-  // request: workspace id từ req
-  //response: ok -> list root pages
-});
 
 
 //Them 1 page vao workspace
@@ -84,7 +77,6 @@ export {
   addMemberToWorkspace,
   deleteWorkspace,
   getWorkspaceById,
-  getAllPages,
   addPageToWorkspace,
   updateWorkspace,
   updateUserRole,

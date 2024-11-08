@@ -76,7 +76,7 @@ const create = async (payload, user) => {
 
   user.workspaces.push(result._id);
   await user.save();
-  
+
   return created({ _id: result._id });
 };
 
@@ -129,18 +129,6 @@ const getWbById = async (workspaceId, next) => {
     return;
   }
   return ok(workspace);
-};
-
-const getPages = async (workspaceId, next) => {
-  const workspace = await Workspace.findById(workspaceId).populate(
-    "pages",
-    "title"
-  );
-  if (!workspace) {
-    next(new WorkspaceNotFoundError());
-    return;
-  }
-  return ok(workspace.pages);
 };
 
 const addPagetoWb = async (payload, workspaceId, next) => {
@@ -248,7 +236,6 @@ export {
   addMember,
   deleteworkspace,
   getWbById,
-  getPages,
   addPagetoWb,
   removePageFromWb,
   updateUserAccess,

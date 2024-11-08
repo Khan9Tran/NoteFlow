@@ -8,6 +8,7 @@ import {
   deletePageByWorkspaceId,
   updatePageContentById,
   getAllTasksByPageId,
+  getPages
 } from "../../services/pages.service.js";
 
 //check user has workspace access
@@ -50,6 +51,10 @@ const getAllTasks = asyncErrorHandler(async (req, res, next) => {
   return getAllTasksByPageId(req, res, next);
 });
 
+const getAllPages = asyncErrorHandler(async (req, res, next) => {
+  return getPages(req, res, next);
+});
+
 export {
   getPageById,
   getPageContent,
@@ -59,4 +64,5 @@ export {
   deletePageByWorkspace,
   getAllTasks,
   createPage,
+  getAllPages,
 };

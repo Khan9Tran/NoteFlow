@@ -272,6 +272,26 @@ const getAllTasksByPageId = async (req, res, next) => {
   });
 };
 
+const getPages = async (req, res, next) => {
+  const workspaceId = req.query.workspaceId || null;
+
+  if (workspaceId === null) {
+    next(new WorkspaceNotFoundError("Workspace is required"));
+    return;
+  }
+
+  const workspace = await Workspace.findById(workspaceId).populate(
+    "pages",
+    "title"
+  );
+
+
+  if (!workspace) {
+    next(new WorkspaceNotFoundError());
+    return;
+  }
+  return ok(workspace.pages);
+};
 export {
   createFirstPage,
   createNewPage,
@@ -282,4 +302,5 @@ export {
   deletePageByWorkspaceId,
   updatePageContentById,
   getAllTasksByPageId,
+  getPages
 };
