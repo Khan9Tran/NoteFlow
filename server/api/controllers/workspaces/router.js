@@ -11,12 +11,14 @@ import {
   removeMemberFromWorkspace,
   removePageFromWorkspace,
   updateWorkspace,
+  getAllWorkSpace,
 } from "./controller.js";
 import validate from "../../middlewares/validate.js";
 import { createWorkspaceRequest } from "../../validators/workspace/createWorkspaceRquest.js";
-
+import adminRoleMiddleware from "../../middlewares/adminRoleMiddleware.js";
 export default express
   .Router()
+  .get("/", adminRoleMiddleware, getAllWorkSpace)
   .get("/:workspaceId/members", getAllMemberByWorkSpace)
   .get("/:workspaceId/pages", getAllPages)
   .get("/:workspaceId", getWorkspaceById)

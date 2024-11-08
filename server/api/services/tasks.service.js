@@ -282,7 +282,7 @@ export const deleteCommentById = async (taskId, commentId, req, next) => {
     );
   }
 
-  await Comment.findByIdAndDelete(commentId);
+  // await Comment.findByIdAndDelete(commentId);
 
   task.comments = task.comments.filter((c) => c._id.toString() !== commentId);
   await task.save();

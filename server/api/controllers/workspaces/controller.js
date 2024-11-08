@@ -10,8 +10,15 @@ import {
   removePageFromWb,
   removeMemberFromWb,
   updateUserAccess,
+  getWorkspaces,
 } from "../../services/workspaces.service.js";
 
+
+const getAllWorkSpace = asyncErrorHandler(async (req, res, next) => {
+  return getWorkspaces(req.query, next);
+  //return create trả về workspace id ở service, không dùng req (dùng user id từ token)
+  //response: create -> workspace id
+});
 const createWorkspace = asyncErrorHandler(async (req, res, next) => {
   return create(req.body, req.user);
   //return create trả về workspace id ở service, không dùng req (dùng user id từ token)
@@ -82,6 +89,7 @@ const updateUserRole = asyncErrorHandler(async (req, res, next) => {
 
 export {
   createWorkspace,
+  getAllWorkSpace,
   addMemberToWorkspace,
   getAllMemberByWorkSpace,
   deleteWorkspace,

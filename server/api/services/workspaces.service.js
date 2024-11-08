@@ -15,6 +15,55 @@ const createFirstWorkspace = async (userId, userName) => {
   return await newWorkspace.save();
 };
 
+const getWorkspaces = async (query, next) => {
+  const limit = parseInt(query.limit) || 10; // Số lượng kết quả trên mỗi trang
+  const page = parseInt(query.page) || 1; // Trang hiện tại
+  const skip = (page - 1) * limit; // Bỏ qua kết quả (skip)
+  const search = query.search || ""; // Từ khóa tìm kiếm
+
+  // Điều kiện tìm kiếm dựa trên username hoặc email (ví dụ)
+  const searchQuery = {
+    $or: [
+      { name: { $regex: search, $options: "i" } }, // Tìm theo username (không phân biệt hoa thường)
+    ],
+  };
+
+  // Lấy thông tin sắp xếp từ query (mặc định sắp xếp theo name tăng dần)
+  const sortField = query.sort || "createdAt"; // Trường sắp xếp
+  const sortOrder = query.order === "asc" ? 1 : -1; // Thứ tự sắp xếp, mặc định là tăng dần
+
+  // Lấy danh sách người dùng (ngoại trừ trường password)
+  const workspace = await Workspace.find(searchQuery)
+    .skip(skip)
+    .limit(limit)
+    .sort({ [sortField]: sortOrder }); // Sắp xếp theo trường và thứ tự
+
+  // Tính tổng số người dùng thỏa điều kiện tìm kiếm
+  const total = await Workspace.countDocuments(searchQuery);
+
+  // Tính tổng số trang
+  const totalPages = Math.ceil(total / limit);
+
+  // Xác định các giá trị hasPrevPage và hasNextPage
+  const hasPrevPage = page > 1;
+  const hasNextPage = page < totalPages;
+
+  // Xác định trang tiếp theo và trang trước đó
+  const prevPage = hasPrevPage ? page - 1 : null;
+  const nextPage = hasNextPage ? page + 1 : null;
+
+  // Trả về dữ liệu cùng với thông tin phân trang
+  return ok(workspace, "Get WorkSpaces", {
+    page,
+    limit,
+    total,
+    totalPages,
+    hasPrevPage,
+    hasNextPage,
+    prevPage,
+    nextPage,
+  });
+};
 const create = async (payload, user) => {
   const newWorkspace = new Workspace({
     name: payload.name,
@@ -211,4 +260,5 @@ export {
   removePageFromWb,
   updateUserAccess,
   removeMemberFromWb,
+  getWorkspaces,
 };
