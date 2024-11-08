@@ -4,7 +4,6 @@ import {
   addPageToWorkspace,
   createWorkspace,
   deleteWorkspace,
-  getAllMemberByWorkSpace,
   getAllPages,
   updateUserRole,
   getWorkspaceById,
@@ -19,7 +18,6 @@ import adminRoleMiddleware from "../../middlewares/adminRoleMiddleware.js";
 export default express
   .Router()
   .get("/", adminRoleMiddleware, getAllWorkSpace)
-  .get("/:workspaceId/members", getAllMemberByWorkSpace)
   .get("/:workspaceId/pages", getAllPages)
   .get("/:workspaceId", getWorkspaceById)
   .post("/", validate(createWorkspaceRequest), createWorkspace)

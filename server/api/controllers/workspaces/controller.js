@@ -2,7 +2,6 @@ import asyncErrorHandler from "../../../utils/asyncErrorHandler.js";
 import {
   addMember,
   create,
-  getallMembers,
   deleteworkspace,
   getWbById,
   getPages,
@@ -31,11 +30,6 @@ const addMemberToWorkspace = asyncErrorHandler(async (req, res, next) => {
   //response: create -> {name workspace, list member}
 });
 
-const getAllMemberByWorkSpace = asyncErrorHandler(async (req, res, next) => {
-  return getallMembers(req.params.workspaceId, next);
-  // request: workspace id từ req
-  //response: ok -> list member
-});
 
 const deleteWorkspace = asyncErrorHandler(async (req, res, next) => {
   return deleteworkspace(req.params.workspaceId, next);
@@ -91,7 +85,6 @@ export {
   createWorkspace,
   getAllWorkSpace,
   addMemberToWorkspace,
-  getAllMemberByWorkSpace,
   deleteWorkspace,
   getWorkspaceById,
   getAllPages,

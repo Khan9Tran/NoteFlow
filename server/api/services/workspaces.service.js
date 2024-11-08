@@ -106,17 +106,6 @@ const addMember = async (payload, workspaceId, next) => {
   });
 };
 
-const getallMembers = async (workspaceId, next) => {
-  const workspace = await Workspace.findById(workspaceId).populate(
-    "members.userId",
-    "name email"
-  );
-  if (!workspace) {
-    next(new WorkspaceNotFoundError());
-    return;
-  }
-  return ok(workspace.members);
-};
 
 const deleteworkspace = async (workspaceId, next) => {
   const workspace = await Workspace.findById(workspaceId);
@@ -252,7 +241,6 @@ export {
   createFirstWorkspace,
   create,
   addMember,
-  getallMembers,
   deleteworkspace,
   getWbById,
   getPages,

@@ -148,14 +148,25 @@ const getUsers = async (query, next) => {
   const page = parseInt(query.page) || 1; // Trang hiện tại
   const skip = (page - 1) * limit; // Bỏ qua kết quả (skip)
   const search = query.search || ""; // Từ khóa tìm kiếm
+  const workspaceId = query.workspaceId || null; // ID của workspace
 
   // Điều kiện tìm kiếm dựa trên username hoặc email (ví dụ)
-  const searchQuery = {
+  const searchConditions = {
     $or: [
-      { name: { $regex: search, $options: "i" } }, // Tìm theo username (không phân biệt hoa thường)
-      { email: { $regex: search, $options: "i" } }, // Tìm theo email (không phân biệt hoa thường)
+      { name: { $regex: search, $options: "i" } },
+      { email: { $regex: search, $options: "i" } }, 
     ],
   };
+
+  const searchQuery = workspaceId
+    ? {
+        $and: [
+          { workspaces: { $in: [mongoose.Types.ObjectId.createFromHexString(workspaceId)] } },
+          searchConditions,
+        ],
+      }
+    : searchConditions;
+
 
   // Lấy thông tin sắp xếp từ query (mặc định sắp xếp theo name tăng dần)
   const sortField = query.sort || "createdAt"; // Trường sắp xếp
