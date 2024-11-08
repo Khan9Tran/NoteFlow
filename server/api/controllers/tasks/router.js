@@ -9,6 +9,7 @@ import {
   updateTask,
   updateTaskStatus,
   getTaskComments,
+  getAllTasks
 } from "./controller.js";
 import validate from "../../middlewares/validate.js";
 import { createTaskRequest } from "../../validators/task/createTaskRequest.js";
@@ -19,6 +20,7 @@ export default express
   .Router()
   .get("/:taskId/comments", getTaskComments)
   .get("/:taskId", getTaskById)
+  .get("/", getAllTasks)
   .post("/", validate(createTaskRequest), createTask)
   .patch("/:taskId", validate(updateTaskRequest), updateTask)
   .patch("/:taskId/status", updateTaskStatus)

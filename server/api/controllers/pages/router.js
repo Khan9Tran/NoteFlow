@@ -3,9 +3,7 @@ import {
   createPage,
   deletePage,
   deletePageByWorkspace,
-  getAllTasks,
   getPageById,
-  getPageContent,
   updatePageContent,
   updatePageTitle,
   getAllPages,
@@ -18,8 +16,6 @@ export default express
   .Router()
   .get("/:pageId", getPageById)
   .get("", getAllPages)
-  .get("/:pageId/content", getPageContent)
-  .get("/:pageId/tasks", getAllTasks)
   .post("/", validate(createNewPageRequest), createPage)
   .patch("/:pageId/content", updatePageContent)
   .patch("/:pageId/title", validate(updateTitleRequest), updatePageTitle)
