@@ -7,7 +7,6 @@ import {
   updateUserRole,
   getWorkspaceById,
   removeMemberFromWorkspace,
-  removePageFromWorkspace,
   updateWorkspace,
   getAllWorkSpace,
 } from "./controller.js";
@@ -24,5 +23,4 @@ export default express
   .post("/:workspaceId/pages", addPageToWorkspace)
   .patch("/:workspaceId", updateWorkspace)
   .delete("/:workspaceId/members/:memberId", removeMemberFromWorkspace)
-  .delete("/:workspaceId/pages/:pageId", removePageFromWorkspace)
   .delete("/:workspaceId", deleteWorkspace);

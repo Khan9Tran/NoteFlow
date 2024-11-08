@@ -142,14 +142,21 @@ const deletePageById = async (req, res, next) => {
     return;
   }
 
+  workspace.pages.pull({ _id: id });
+  await workspace.save();
   await Page.deleteOne({ _id: id });
 
   return noContent();
 };
 
 const deletePageByWorkspaceId = async (req, res, next) => {
-  const id = req.params.workspaceId;
+  const id = req.query.workspaceId || null;
   const user = req.user;
+
+  if (id === null) {
+    next(new WorkspaceNotFoundError("Workspace is required"));
+    return;
+  }
 
   if (!user.workspaces.includes(id)) {
     next(new ForbiddenError("You are not allowed to access this page"));
@@ -167,6 +174,8 @@ const deletePageByWorkspaceId = async (req, res, next) => {
     return;
   }
 
+  workspace.pages = [];
+  await workspace.save();
   await Page.deleteMany({ workspaceId: id });
 
   return noContent();

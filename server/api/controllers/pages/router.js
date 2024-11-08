@@ -24,4 +24,4 @@ export default express
   .patch("/:pageId/content", updatePageContent)
   .patch("/:pageId/title", validate(updateTitleRequest), updatePageTitle)
   .delete("/:pageId", deletePage)
-  .delete("/all/:workspaceId", deletePageByWorkspace);
+  .delete("/", deletePageByWorkspace);

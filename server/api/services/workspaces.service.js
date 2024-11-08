@@ -163,14 +163,6 @@ const updateWorkspace = async (workspaceId, updateFields, next) => {
   return ok(workspace);
 };
 
-const removePageFromWb = async (pageId, next) => {
-  const page = await Page.findByIdAndDelete(pageId);
-  if (!page) {
-    next(new PageNotFoundError());
-    return;
-  }
-  return noContent();
-};
 
 const removeMemberFromWb = async (workspaceId, memberId, next) => {
   const workspace = await Workspace.findById(workspaceId);
@@ -237,7 +229,6 @@ export {
   deleteworkspace,
   getWbById,
   addPagetoWb,
-  removePageFromWb,
   updateUserAccess,
   removeMemberFromWb,
   getWorkspaces,

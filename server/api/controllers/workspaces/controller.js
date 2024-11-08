@@ -5,7 +5,6 @@ import {
   deleteworkspace,
   getWbById,
   addPagetoWb,
-  removePageFromWb,
   removeMemberFromWb,
   updateUserAccess,
   getWorkspaces,
@@ -55,16 +54,9 @@ const updateWorkspace = asyncErrorHandler(async (req, res, next) => {
   //response: ok -> workspace
 });
 
-const removePageFromWorkspace = asyncErrorHandler(async (req, res, next) => {
-  return removePageFromWb(req.params.pageId, next);
-  // request: page id từ req
-  //response: noContent
-});
 
 const removeMemberFromWorkspace = asyncErrorHandler(async (req, res, next) => {
   return removeMemberFromWb(req.params.workspaceId, req.params.memberId, next);
-  // request: member id từ req
-  //response: noContent
 });
 
 const updateUserRole = asyncErrorHandler(async (req, res, next) => {
@@ -80,6 +72,5 @@ export {
   addPageToWorkspace,
   updateWorkspace,
   updateUserRole,
-  removePageFromWorkspace,
   removeMemberFromWorkspace,
 };
