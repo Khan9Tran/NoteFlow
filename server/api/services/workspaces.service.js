@@ -71,7 +71,12 @@ const create = async (payload, user) => {
     members: [{ userId: user._id, role: "admin" }],
   });
 
+
   const result = await newWorkspace.save();
+
+  user.workspaces.push(result._id);
+  await user.save();
+  
   return created({ _id: result._id });
 };
 
