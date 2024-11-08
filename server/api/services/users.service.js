@@ -143,11 +143,6 @@ const addWorkspace = async (id, payload, user, next) => {
   }
 };
 
-const getUserAuth = async (user, next) => {
-  const userWithoutPassword = _.omit(user.toObject(), ["password"]);
-  return ok(userWithoutPassword);
-};
-
 const getUsers = async (query, next) => {
   const limit = parseInt(query.limit) || 10; // Số lượng kết quả trên mỗi trang
   const page = parseInt(query.page) || 1; // Trang hiện tại
@@ -231,6 +226,5 @@ export {
   getWorkspace,
   addWorkspace,
   getUsers,
-  getUserAuth,
   updateUserProfilePicture,
 };
