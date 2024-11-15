@@ -1,6 +1,7 @@
 import Joi from "joi";
 
 export const updateTaskRequest = Joi.object({
+  status: Joi.string().valid("not_started", "in_progress", "done").optional(),
   title: Joi.string().min(1).max(255).optional(), // optional để không bắt buộc phải có
   description: Joi.string().optional().allow(""), // cho phép chuỗi rỗng
   priority: Joi.string().valid("low", "medium", "high").optional(),

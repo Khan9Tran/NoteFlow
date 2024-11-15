@@ -8,7 +8,6 @@ import { Task } from "../../models/task.schema.js";
 import { Workspace } from "../../models/workspace.schema.js";
 import { Comment } from "../../models/comment.schema.js";
 import { created, noContent, ok } from "../helpers/http.js";
-import { query } from "express";
 
 export const createNewTask = async (req, res, next) => {
   const task = new Task();
@@ -52,53 +51,11 @@ export const createNewTask = async (req, res, next) => {
 
 export const getTaskById = async (req, res, next) => {
   const id = req.params.taskId;
-
   const task = await validateTaskAccess(await Task.findById(id), req, next);
 
   return ok(task);
 };
 
-export const getCommentsByTaskId = async (req, taskId, next) => {
-  const query = req.query;
-  const limit = parseInt(query.limit) || 10; // Số lượng kết quả trên mỗi trang
-  const page = parseInt(query.page) || 1; // Trang hiện tại
-  const skip = (page - 1) * limit; // Bỏ qua kết quả (skip)
-
-  // Tìm task theo taskId
-  const task = await Task.findById(taskId);
-  if (!task) {
-    return next(new TaskNotFoundError("Task not found"));
-  }
-
-  // Lấy các bình luận với phân trang
-  const comments = task.comments.slice(skip, skip + limit);
-
-  // Tính tổng số bình luận trong task
-  const total = task.comments.length;
-
-  // Tính tổng số trang
-  const totalPages = Math.ceil(total / limit);
-
-  // Xác định các giá trị hasPrevPage và hasNextPage
-  const hasPrevPage = page > 1;
-  const hasNextPage = page < totalPages;
-
-  // Xác định trang tiếp theo và trang trước đó
-  const prevPage = hasPrevPage ? page - 1 : null;
-  const nextPage = hasNextPage ? page + 1 : null;
-
-  // Trả về dữ liệu cùng với thông tin phân trang
-  return ok(comments, "Get comments", {
-    page,
-    limit,
-    total,
-    totalPages,
-    hasPrevPage,
-    hasNextPage,
-    prevPage,
-    nextPage,
-  });
-};
 
 export const updateTaskById = async (req, res, next) => {
   const task = await validateTaskAccess(
@@ -139,21 +96,6 @@ export const deleteTaskById = async (taskId, req, next) => {
   return noContent();
 };
 
-export const updateTaskStatusById = async (taskId, req, next) => {
-  const task = await validateTaskAccess(await Task.findById(taskId), req, next);
-
-  if (
-    task.assignedTo &&
-    !task.assignedTo.some((user) => user.toString() === req.user._id.toString())
-  ) {
-    return next(
-      new ForbiddenError("You are not allowed to update this task status")
-    );
-  }
-
-  task.status = req.body.status;
-  return ok(await task.save());
-};
 
 export const addCommentToTask = async (taskId, req, next) => {
   const comment = req.body.text;

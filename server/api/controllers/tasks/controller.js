@@ -2,12 +2,10 @@ import asyncErrorHandler from "../../../utils/asyncErrorHandler.js";
 import {
   createNewTask,
   updateTaskById,
-  updateTaskStatusById,
   deleteTaskById,
   addCommentToTask,
   updateCommentById,
   deleteCommentById,
-  getCommentsByTaskId,
   getTasks
 } from "../../services/tasks.service.js";
 import { getTaskById as fetchTask } from "../../services/tasks.service.js";
@@ -15,15 +13,6 @@ import { getTaskById as fetchTask } from "../../services/tasks.service.js";
 const getTaskById = asyncErrorHandler(async (req, res, next) => {
   return fetchTask(req, res, next);
 
-  // req: taskId
-  // res: ok -> task
-});
-
-const getTaskComments = asyncErrorHandler(async (req, res, next) => {
-  return getCommentsByTaskId(req, req.params.taskId, next);
-
-  // req: taskId
-  // res: ok -> task
 });
 
 //check admin or owner of the workspace
@@ -36,12 +25,6 @@ const updateTask = asyncErrorHandler(async (req, res, next) => {
   return updateTaskById(req, res, next);
 });
 
-//check owner of the task
-const updateTaskStatus = asyncErrorHandler(async (req, res, next) => {
-  return updateTaskStatusById(req.params.taskId, req, next);
-  // req: taskId, status
-  // res: ok -> task
-});
 
 //check admin or owner of the workspace
 const deleteTask = asyncErrorHandler(async (req, res, next) => {
@@ -77,13 +60,11 @@ const getAllTasks = asyncErrorHandler(async (req, res, next) => {
 
 export {
   getTaskById,
-  getTaskComments,
   createTask,
   updateTask,
   deleteTask,
   addComment,
   updateComment,
   deleteComment,
-  updateTaskStatus,
   getAllTasks
 };
