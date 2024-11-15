@@ -2,10 +2,9 @@ import asyncErrorHandler from "../../../utils/asyncErrorHandler.js";
 import {
   createNewPage,
   getById,
-  updateTitle,
   deletePageById,
   deletePageByWorkspaceId,
-  updatePageContentById,
+  updatePageById,
   getPages
 } from "../../services/pages.service.js";
 
@@ -21,14 +20,10 @@ const createPage = asyncErrorHandler(async (req, res, next) => {
 });
 
 //check user has workspace access
-const updatePageContent = asyncErrorHandler(async (req, res, next) => {
-  return updatePageContentById(req, res, next);
+const updatePage = asyncErrorHandler(async (req, res, next) => {
+  return updatePageById(req, res, next);
 });
 
-//check user has workspace access
-const updatePageTitle = asyncErrorHandler(async (req, res, next) => {
-  return updateTitle(req, res, next);
-});
 
 //check admin or owner of the workspace
 const deletePage = asyncErrorHandler(async (req, res, next) => {
@@ -46,8 +41,7 @@ const getAllPages = asyncErrorHandler(async (req, res, next) => {
 
 export {
   getPageById,
-  updatePageContent,
-  updatePageTitle,
+  updatePage,
   deletePage,
   deletePageByWorkspace,
   createPage,

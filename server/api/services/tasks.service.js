@@ -46,6 +46,7 @@ export const createNewTask = async (req, res, next) => {
   await task.save();
   page.content.push({ taskId: task._id, type: "task" });
   await page.save();
+  
   return created(task);
 };
 

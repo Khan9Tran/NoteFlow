@@ -71,30 +71,6 @@ const getById = async (req, res, next) => {
 };
 
 
-const updateTitle = async (req, res, next) => {
-  const id = req.params.pageId;
-  const payload = req.body;
-  const user = req.user;
-
-  const page = await Page.findOne({ _id: id });
-
-  if (!user.workspaces.includes(page.workspaceId)) {
-    next(new ForbiddenError("You are not allowed to access this page"));
-    return;
-  }
-
-  if (!page) {
-    next(new PageNotFoundError());
-    return;
-  }
-
-  page.title = payload.title;
-
-  await page.save();
-
-  return ok({ page: _.omit(page.toObject(), ["content"]) });
-};
-
 const deletePageById = async (req, res, next) => {
   const id = req.params.pageId;
   const user = req.user;
@@ -161,7 +137,7 @@ const deletePageByWorkspaceId = async (req, res, next) => {
   return noContent();
 };
 
-const updatePageContentById = async (req, res, next) => {
+const updatePageById = async (req, res, next) => {
   const { error } = validateUpdateContent(req.body);
 
   if (error) {
@@ -198,10 +174,11 @@ const updatePageContentById = async (req, res, next) => {
   }
 
   page.content = req.body.content;
+  page.title = req.body.title;
 
   await page.save();
 
-  return ok({ content: page.content });
+  return ok(page);
 };
 
 
@@ -229,9 +206,8 @@ export {
   createFirstPage,
   createNewPage,
   getById,
-  updateTitle,
   deletePageById,
   deletePageByWorkspaceId,
-  updatePageContentById,
+  updatePageById,
   getPages
 };
