@@ -6,7 +6,6 @@ import { WorkspaceNotFoundError } from "../../errors/workspaceError.js";
 import { Page } from "../../models/page.schema.js";
 import { Task } from "../../models/task.schema.js";
 import { Workspace } from "../../models/workspace.schema.js";
-import { Comment } from "../../models/comment.schema.js";
 import { created, noContent, ok } from "../helpers/http.js";
 
 export const createNewTask = async (req, res, next) => {
@@ -63,7 +62,7 @@ export const updateTaskById = async (req, res, next) => {
     req,
     next
   );
-
+  
   Object.assign(task, req.body);
   return ok(await task.save());
 };
@@ -93,144 +92,6 @@ export const deleteTaskById = async (taskId, req, next) => {
   }
 
   await Task.findByIdAndDelete(taskId);
-  return noContent();
-};
-
-
-export const addCommentToTask = async (taskId, req, next) => {
-  const comment = req.body.text;
-
-  const task = await Task.findById(taskId);
-  if (!task) {
-    return next(new TaskNotFoundError("Task not found"));
-  }
-
-  const page = await Page.findById(task.pageId);
-  if (!page) {
-    return next(new PageNotFoundError("Page not found"));
-  }
-
-  const workspace = await Workspace.findById(page.workspaceId);
-  if (!workspace) {
-    return next(new WorkspaceNotFoundError("Workspace not found"));
-  }
-
-  const userInWorkspace = workspace.members.find(
-    (member) => member.userId.toString() === req.user._id.toString()
-  );
-  if (!userInWorkspace) {
-    return next(
-      new ForbiddenError("You are not allowed to access this workspace")
-    );
-  }
-
-  // Thêm bình luận vào Task
-  const newComment = new Comment({
-    taskId: task._id,
-    userId: req.user._id,
-    text: comment,
-    createdAt: new Date(),
-  });
-  await newComment.save();
-  task.comments.push(newComment);
-
-  return ok(await task.save());
-};
-
-export const updateCommentById = async (taskId, commentId, req, next) => {
-  const task = await Task.findById(taskId);
-  if (!task) {
-    return next(new TaskNotFoundError("Task not found"));
-  }
-
-  const page = await Page.findById(task.pageId);
-  if (!page) {
-    return next(new PageNotFoundError("Page not found"));
-  }
-
-  const workspace = await Workspace.findById(page.workspaceId);
-  if (!workspace) {
-    return next(new WorkspaceNotFoundError("Workspace not found"));
-  }
-
-  const userInWorkspace = workspace.members.find(
-    (member) => member.userId.toString() === req.user._id.toString()
-  );
-  if (!userInWorkspace) {
-    return next(
-      new ForbiddenError("You are not allowed to access this workspace")
-    );
-  }
-
-  const commentIndex = task.comments.findIndex(
-    (comment) => comment._id.toString() === commentId
-  );
-
-  if (commentIndex === -1) {
-    return next(
-      new ForbiddenError("Comment not found or does not belong to this task")
-    );
-  }
-
-  const comment = task.comments[commentIndex];
-
-  if (comment.userId.toString() !== req.user._id.toString()) {
-    return next(
-      new ForbiddenError("You are not allowed to update this comment")
-    );
-  }
-
-  task.comments[commentIndex].text = req.body.text;
-  task.updatedAt = Date.now();
-
-  await task.save();
-
-  return ok(task);
-};
-
-export const deleteCommentById = async (taskId, commentId, req, next) => {
-  const task = await Task.findById(taskId);
-  if (!task) {
-    return next(new TaskNotFoundError("Task not found"));
-  }
-
-  const page = await Page.findById(task.pageId);
-  if (!page) {
-    return next(new PageNotFoundError("Page not found"));
-  }
-
-  const workspace = await Workspace.findById(page.workspaceId);
-  if (!workspace) {
-    return next(new WorkspaceNotFoundError("Workspace not found"));
-  }
-
-  const userInWorkspace = workspace.members.find(
-    (member) => member.userId.toString() === req.user._id.toString()
-  );
-  console.log(userInWorkspace);
-
-  if (
-    !userInWorkspace ||
-    (userInWorkspace.role !== "admin" &&
-      workspace.owner.toString() !== req.user._id.toString())
-  ) {
-    return next(
-      new ForbiddenError("You are not allowed to delete this comment")
-    );
-  }
-
-  const comment = await Comment.findById(commentId);
-  if (!comment || comment.taskId.toString() !== taskId) {
-    return next(
-      new ForbiddenError("Comment not found or does not belong to this task")
-    );
-  }
-
-  // await Comment.findByIdAndDelete(commentId);
-
-  task.comments = task.comments.filter((c) => c._id.toString() !== commentId);
-  await task.save();
-
   return noContent();
 };
 

@@ -22,4 +22,15 @@ export const updateTaskRequest = Joi.object({
         .allow(null)
     )
     .optional(),
+  comments: Joi.array()
+    .items(
+      Joi.object({
+        userId: Joi.string()
+          .required()
+          .pattern(/^[0-9a-fA-F]{24}$/),
+        text: Joi.string().required(), // Comment text bắt buộc
+        createdAt: Joi.date().optional(),
+      })
+    )
+    .optional(),
 }).min(1);
