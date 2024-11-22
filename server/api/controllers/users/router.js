@@ -6,7 +6,6 @@ import {
   getWorkspaceAccess,
   deleteUser,
   updateUser,
-  updateUserProfilePicture,
   removeWorkspaceByUserId,
   getAllUsers,
 } from "./controller.js";
@@ -26,7 +25,6 @@ export default express
     addWorkspaceByUserId
   )
   .patch("/:id", validate(userUpdateRequest), updateUser)
-  .patch("/:id/profile-picture", updateUserProfilePicture)
   .delete(
     "/:id/workspaces-access/:workspaceId",
     ownershipMiddleware,

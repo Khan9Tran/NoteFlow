@@ -6,7 +6,6 @@ import {
   getWorkspace,
   removeWorkspace,
   update,
-  updateUserProfilePicture as updateAvatar,
 } from "../../services/users.service.js";
 
 const getAllUsers = asyncErrorHandler(async (req, res, next) => {
@@ -39,10 +38,6 @@ const updateUser = asyncErrorHandler(async (req, res, next) => {
   return update(req.user, req.body, next);
 });
 
-//Patch profile picture
-const updateUserProfilePicture = asyncErrorHandler(async (req, res, next) => {
-  return updateAvatar(req, res, next);
-});
 
 //Delete user
 const deleteUser = asyncErrorHandler(async (req, res, next) => {
@@ -57,7 +52,6 @@ export {
   removeWorkspaceByUserId,
   getWorkspaceAccess,
   updateUser,
-  updateUserProfilePicture,
   deleteUser,
   getAllUsers,
 };

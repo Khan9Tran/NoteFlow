@@ -6,7 +6,10 @@ const UserSchema = new Schema({
   email: { type: String, required: true, unique: true },
   googleId: { type: String },
   password: { type: String },
-  profilePicture: { type: String },
+  profilePicture: {
+    data: Buffer,
+    contentType: String,
+  },
   workspaces: [{ type: Schema.Types.ObjectId, ref: "Workspace" }],
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
