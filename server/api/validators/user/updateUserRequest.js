@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 const userUpdateRequest = Joi.object({
-  name: Joi.string().required(),
+  name: Joi.string().optional(),
   profilePicture: Joi.object({
     data: Joi.binary().required(), // Dữ liệu nhị phân của ảnh
     contentType: Joi.string().valid("image/png", "image/jpeg").required(), // Chỉ chấp nhận một số loại MIME type

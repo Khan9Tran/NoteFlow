@@ -29,14 +29,14 @@ app.use(cors({
 const root = path.normalize(`${__dirname}/../..`);
 
 function configureApp() {
-  app.use(bodyParser.json({ limit: process.env.REQUEST_LIMIT || "100kb" }));
+  app.use(bodyParser.json({ limit: process.env.REQUEST_LIMIT || "10000kb" }));
   app.use(
     bodyParser.urlencoded({
       extended: true,
-      limit: process.env.REQUEST_LIMIT || "100kb",
+      limit: process.env.REQUEST_LIMIT || "10000kb",
     })
   );
-  app.use(bodyParser.text({ limit: process.env.REQUEST_LIMIT || "100kb" }));
+  app.use(bodyParser.text({ limit: process.env.REQUEST_LIMIT || "10000kb" }));
   app.use(cookieParser(process.env.SESSION_SECRET));
   app.use(express.static(`${root}/public`));
 }

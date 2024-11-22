@@ -35,7 +35,7 @@ const getWorkspaceAccess = asyncErrorHandler(async (req, res, next) => {
 
 //Patch user info
 const updateUser = asyncErrorHandler(async (req, res, next) => {
-  return update(req.user, req.body, next);
+  return update(req.user, req, next);
 });
 
 

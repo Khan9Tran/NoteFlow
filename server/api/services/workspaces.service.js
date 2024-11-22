@@ -71,7 +71,6 @@ const create = async (payload, user) => {
     members: [{ userId: user._id, role: "admin" }],
   });
 
-
   const result = await newWorkspace.save();
 
   user.workspaces.push(result._id);
@@ -111,7 +110,6 @@ const addMember = async (payload, workspaceId, next) => {
   });
 };
 
-
 const deleteworkspace = async (workspaceId, next) => {
   const workspace = await Workspace.findById(workspaceId);
   if (!workspace) {
@@ -123,7 +121,15 @@ const deleteworkspace = async (workspaceId, next) => {
 };
 
 const getWbById = async (workspaceId, next) => {
-  const workspace = await Workspace.findById(workspaceId);
+  const workspace = await Workspace.findById(workspaceId)
+    .populate({
+      path: "members.userId",
+      select: "name profilePicture", // Chỉ lấy các trường name và profilePicture
+    })
+    .populate({
+      path: "owner",
+      select: "name profilePicture", // Nếu cần thông tin chủ sở hữu
+    });
   if (!workspace) {
     next(new WorkspaceNotFoundError());
     return;
@@ -162,7 +168,6 @@ const updateWorkspace = async (workspaceId, updateFields, next) => {
   }
   return ok(workspace);
 };
-
 
 const removeMemberFromWb = async (workspaceId, memberId, next) => {
   const workspace = await Workspace.findById(workspaceId);

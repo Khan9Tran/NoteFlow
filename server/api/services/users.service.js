@@ -88,11 +88,11 @@ const removeWorkspace = async (user, workspaceId, next) => {
   return noContent();
 };
 
-const update = async (user, payload) => {
+const update = async (user, req) => {
   try {
     const updatedUser = await User.findOneAndUpdate(
       { _id: user._id },
-      payload,
+      req.body,
       { new: true, runValidators: true }
     ).select("-password");
 
