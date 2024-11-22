@@ -96,8 +96,8 @@ const update = async (user, payload) => {
       { new: true, runValidators: true }
     ).select("-password");
 
-    const user = await User.findById(user._id).select("-password");
-    return ok(user);
+    const rs = await User.findById(user._id).select("-password");
+    return ok(rs);
   } catch (error) {
     logger.error(error);
     return serverError();
