@@ -7,7 +7,7 @@ const UserSchema = new Schema({
   googleId: { type: String },
   password: { type: String },
   profilePicture: {
-    data: Buffer,
+    data: String,
     contentType: String,
   },
   workspaces: [{ type: Schema.Types.ObjectId, ref: "Workspace" }],
