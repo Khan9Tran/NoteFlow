@@ -3,7 +3,11 @@ import { Page } from "../../models/page.schema.js";
 import { created, noContent, ok } from "../helpers/http.js";
 import { User } from "../../models/user.schema.js";
 import { WorkspaceNotFoundError } from "../../errors/workspaceError.js";
-import { UserIsExistError, UserNotFoundError } from "../../errors/userError.js";
+import {
+  BadRequestError,
+  UserIsExistError,
+  UserNotFoundError,
+} from "../../errors/userError.js";
 import { PageNotFoundError } from "../../errors/pageError.js";
 import { ForbiddenError } from "../../errors/authError.js";
 const createFirstWorkspace = async (userId, userName) => {
@@ -156,9 +160,73 @@ const addPagetoWb = async (payload, workspaceId, next) => {
   return created(newPage._id);
 };
 
-const updateWorkspace = async (workspaceId, updateFields, next) => {
+const update = async (req, res, next) => {
+  const { userId, changeRole } = req.query;
+
+  if (userId && changeRole) {
+    return next(new BadRequestError("Only one query parameter is allowed."));
+  }
+  if (userId) {
+    const workspace = await Workspace.findById(req.params.workspaceId);
+    if (!workspace) {
+      next(new WorkspaceNotFoundError());
+      return;
+    }
+
+    const isMemberExist = workspace.members.some(
+      (member) => member.userId.toString() === userId
+    );
+
+    if (isMemberExist) {
+      next(new BadRequestError("User is already a member of this workspace."));
+      return;
+    }
+
+    workspace.members.push({ userId: userId, role: "member" });
+
+    await workspace.save();
+    const user = req.user;
+    user.workspaces.push(workspace._id);
+    await user.save();
+
+    return ok(workspace);
+  }
+
+  if (changeRole) {
+    const workspace = await Workspace.findById(req.params.workspaceId);
+    if (!workspace) {
+      next(new WorkspaceNotFoundError());
+      return;
+    }
+
+    const member = workspace.members.find(
+      (member) => member.userId.toString() === changeRole
+    );
+
+    if (!member) {
+      next(new UserNotFoundError());
+      return;
+    }
+
+    const user = req.user;
+    if (user._id.toString() !== workspace.owner.toString()) {
+      next(new ForbiddenError("You are not allowed to update user role"));
+      return;
+    }
+
+    if (member.role === "admin") {
+      member.role = "member";
+    } else {
+      member.role = "admin";
+    }
+
+    await workspace.save();
+
+    return ok(workspace);
+  }
+
   const workspace = await Workspace.findByIdAndUpdate(
-    workspaceId,
+    req.params.workspaceId,
     updateFields,
     { new: true }
   );
@@ -166,6 +234,7 @@ const updateWorkspace = async (workspaceId, updateFields, next) => {
     next(new WorkspaceNotFoundError());
     return;
   }
+  
   return ok(workspace);
 };
 
@@ -237,4 +306,5 @@ export {
   updateUserAccess,
   removeMemberFromWb,
   getWorkspaces,
+  update,
 };

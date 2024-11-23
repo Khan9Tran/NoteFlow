@@ -8,6 +8,7 @@ import {
   removeMemberFromWb,
   updateUserAccess,
   getWorkspaces,
+  update,
 } from "../../services/workspaces.service.js";
 
 
@@ -49,9 +50,7 @@ const addPageToWorkspace = asyncErrorHandler(async (req, res, next) => {
 
 //Patch update workspace
 const updateWorkspace = asyncErrorHandler(async (req, res, next) => {
-  return;
-  // request: workspace id từ req, cac truong muon update
-  //response: ok -> workspace
+  return update(req, res, next);
 });
 
 
