@@ -48,6 +48,9 @@ const createNewPage = async (payload, user, next) => {
   }
 
   const newPage = new Page(payload);
+  workspace.pages.push(newPage._id);
+  await workspace.save();
+
   return created(await newPage.save());
 };
 
@@ -69,7 +72,6 @@ const getById = async (req, res, next) => {
 
   return ok(page);
 };
-
 
 const deletePageById = async (req, res, next) => {
   const id = req.params.pageId;
@@ -181,7 +183,6 @@ const updatePageById = async (req, res, next) => {
   return ok(page);
 };
 
-
 const getPages = async (req, res, next) => {
   const workspaceId = req.query.workspaceId || null;
 
@@ -194,7 +195,6 @@ const getPages = async (req, res, next) => {
     "pages",
     "title"
   );
-
 
   if (!workspace) {
     next(new WorkspaceNotFoundError());
@@ -209,5 +209,5 @@ export {
   deletePageById,
   deletePageByWorkspaceId,
   updatePageById,
-  getPages
+  getPages,
 };
