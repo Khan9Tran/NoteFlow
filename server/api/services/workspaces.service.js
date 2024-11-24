@@ -116,10 +116,30 @@ const addMember = async (payload, workspaceId, next) => {
 
 const deleteworkspace = async (workspaceId, next) => {
   const workspace = await Workspace.findById(workspaceId);
+
   if (!workspace) {
     next(new WorkspaceNotFoundError());
     return;
   }
+
+  const users = await User.find({ workspaces: workspaceId });
+  users.forEach(async (user) => {
+    user.workspaces = user.workspaces.filter(
+      (workspace) => workspace.toString() !== workspaceId
+    );
+    await user.save();
+  });
+
+  const pages = await Page.find({ workspaceId: workspaceId });
+  pages.forEach(async (page) => {
+    await Page.deleteOne({ _id: page._id });
+  });
+
+  if (!workspace) {
+    next(new WorkspaceNotFoundError());
+    return;
+  }
+
   await Workspace.deleteOne({ _id: workspaceId });
   return noContent();
 };
@@ -234,7 +254,7 @@ const update = async (req, res, next) => {
     next(new WorkspaceNotFoundError());
     return;
   }
-  
+
   return ok(workspace);
 };
 
