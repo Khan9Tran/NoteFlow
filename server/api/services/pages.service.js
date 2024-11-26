@@ -175,7 +175,7 @@ const updatePageById = async (req, res, next) => {
     return;
   }
 
-  page.content = req.body.content;
+  // page.content = req.body.content;  
   page.title = req.body.title;
 
   await page.save();
