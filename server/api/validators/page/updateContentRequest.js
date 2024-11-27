@@ -35,7 +35,7 @@ const contentItemSchema = Joi.object({
 
 // Định nghĩa schema cho mảng content
 const updateContentSchema = Joi.object({
-  title: Joi.string().required(),
+  title: Joi.string().optional(),
   content: Joi.array().items(contentItemSchema),
 });
 
