@@ -91,6 +91,9 @@ export const deleteTaskById = async (taskId, req, next) => {
     return next(new ForbiddenError("You are not allowed to delete this task"));
   }
 
+  page.content = page.content.filter(item => item.taskId.toString() !== taskId.toString());
+  await page.save();
+
   await Task.findByIdAndDelete(taskId);
   return noContent();
 };
