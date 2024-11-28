@@ -17,7 +17,7 @@ import adminRoleMiddleware from "../../middlewares/adminRoleMiddleware.js";
 export default express
   .Router()
   .get("/", adminRoleMiddleware, getAllUsers)
-  .get("/:id", ownershipMiddleware, getUserInfo)
+  .get("/:id", getUserInfo)
   .get("/:id/workspaces-access", ownershipMiddleware, getWorkspaceAccess)
   .post(
     "/:id/workspaces-access",
